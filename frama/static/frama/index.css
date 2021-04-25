@@ -1,0 +1,105 @@
+/* Global variables*/
+:root {
+    /* dark style */
+    --bar_color: #333;
+    --default: silver;
+    --background: whitesmoke;
+
+    /* light style */
+    /* --bar_color: #297373;
+    --default: #F3D3BD;
+    --background: #f4ebd9; */
+}
+
+html, body {
+    background-color: var(--background);
+    margin: 0;
+}
+
+div {
+    background-color: var(--default);
+}
+
+.full-height {
+    height: 100vh;
+}
+
+ul > li {
+    list-style-type: square;
+}
+
+/* Style flex columns */
+.flex-grid {
+    display: flex;
+}
+
+.col {
+    flex: 1;
+    border: 2px solid var(--bar_color);
+}
+
+.col p {
+    padding: 10px;
+}
+
+.col h3 {
+    padding: 5px;
+}
+
+/* Style the top navigation bar */
+.topnav {
+    overflow: hidden;
+    background-color: var(--bar_color);
+}
+
+/* Style the topnav links */
+.topnav a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-right: 2px solid #ddd;
+}
+
+/* Change color on hover */
+.topnav a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+#code-elements {
+    height: 65vh;
+}
+
+#files {
+    max-width: 20%;
+}
+
+#elements {
+    max-width: 20%;
+}
+
+#tabs {
+    max-height: 20%;
+}
+
+/* Display sections one below another */
+@media screen and (max-width: 800px) {
+    .flex-grid {
+        display: block;
+    }
+
+    #code-elements {
+        height: auto;
+    }
+
+    #files {
+        max-width: 100%;
+    }
+
+    #elements {
+        max-width: 100%;
+    }
+}
