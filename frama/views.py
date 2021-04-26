@@ -69,4 +69,16 @@ class FileCreateView(CreateView):
 
 def tree(request):
     root_directory = Directory.objects.get(pk="ROOT")  # TODO
-    return render(request, "frama/directory_tree.html", {"recursive_structure": [root_directory]})
+    return render(request, "frama/directory_tree.html", {
+        "recursive_structure": [root_directory]
+    })
+
+
+def tree_highlight(request, chosen_file):
+    file = get_object_or_404(File, pk=chosen_file)
+
+    root_directory = Directory.objects.get(pk="ROOT")
+    return render(request, "frama/directory_tree.html", {
+        "recursive_structure": [root_directory],
+        "chosen_file": file
+    })

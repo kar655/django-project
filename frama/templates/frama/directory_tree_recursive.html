@@ -7,8 +7,12 @@
                     {% include "frama/directory_tree_recursive.html" with recursive_structure=entry.directory_set.all %}
                     {% for file in entry.file_set.all %}
                         {% if file.is_valid %}
-                            <li>
-                                {{ file }}
+                            {% if chosen_file == file %}
+                                <li style="color:blue">
+                            {% else %}
+                                <li>
+                            {% endif %}
+                            {{ file }}
                             </li>
                         {% endif %}
                     {% endfor %}
