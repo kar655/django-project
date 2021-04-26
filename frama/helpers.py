@@ -1,6 +1,6 @@
 import subprocess
 
-from .models import File
+from .models import File, User
 
 
 def focus_on_program_elements_helper(file: File) -> str:
@@ -13,3 +13,7 @@ def focus_on_program_elements_helper(file: File) -> str:
     print(f"stderr = {result.stderr}")
 
     return result.stdout + result.stderr
+
+
+def get_current_user(session) -> User:
+    return User.objects.get(pk=session["uname_id"])

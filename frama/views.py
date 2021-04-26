@@ -6,9 +6,10 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
 from django import forms
 
-from .models import File, User, Directory
-from .forms import FileForm, UserForm, DirectoryForm
-from .helpers import focus_on_program_elements_helper
+from .models import File, User, Directory, FileSection
+from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm
+from .helpers import focus_on_program_elements_helper, get_current_user
+
 
 def index(request):
     request.session["uname_id"] = 1
@@ -51,8 +52,7 @@ class DirectoryCreateView(CreateView):
     success_url = reverse_lazy("index")
 
     def form_valid(self, form):
-        user = User.objects.get(pk=self.request.session["uname_id"])
-        form.instance.user = user
+        form.instance.user = get_current_user(self.request.session)
         return super(DirectoryCreateView, self).form_valid(form)
 
 
@@ -62,8 +62,7 @@ class FileCreateView(CreateView):
     success_url = reverse_lazy("index")
 
     def form_valid(self, form):
-        user = User.objects.get(pk=self.request.session["uname_id"])
-        form.instance.user = user
+        form.instance.user = get_current_user(self.request.session)
         return super(FileCreateView, self).form_valid(form)
 
 
@@ -88,3 +87,13 @@ def focus_on_program_elements(request, chosen_file):
     file = get_object_or_404(File, pk=chosen_file)
 
     return HttpResponse(focus_on_program_elements_helper(file))
+
+
+class FileSectionCreateView(CreateView):
+    model = FileSection
+    form_class = FileSectionForm
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        form.instance.user = get_current_user(self.request.session)
+        return super(FileSectionCreateView, self).form_valid(form)

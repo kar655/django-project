@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import User, File, Directory
+from .models import User, File, Directory, FileSection
 
 
 class UserForm(forms.ModelForm):
@@ -22,5 +22,12 @@ class DirectoryForm(forms.ModelForm):
 class FileForm(forms.ModelForm):
     class Meta:
         model = File
+        fields = "__all__"
+        exclude = ["timestamp", "is_valid", "user"]
+
+
+class FileSectionForm(forms.ModelForm):
+    class Meta:
+        model = FileSection
         fields = "__all__"
         exclude = ["timestamp", "is_valid", "user"]

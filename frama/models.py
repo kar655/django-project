@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 
 class User(models.Model):
@@ -34,6 +35,44 @@ class File(BasicInformation):
     def __str__(self):
         return "File: " + self.name
 
-# class FileSection(BasicInformation):
-#     name = models.CharField(max_length=30, blank=True, null=True)
-#     description = models.CharField(max_length=100, null=True, blank=True)
+
+# class SectionData(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     status_data = models.CharField(max_length=100)
+
+
+class FileSection(BasicInformation):
+    file_referred = models.ForeignKey(File, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=30, blank=True, null=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+
+    class SectionCategory(models.TextChoices):
+        PROCEDURE = "Procedure", gettext_lazy("Procedure")
+        PROPERTY = "Property", gettext_lazy("Property")
+        LEMMA = "Lemma", gettext_lazy("Lemma")
+        ASSERTION = "Assertion", gettext_lazy("Assertion")
+        INVARIANT = "Invariant", gettext_lazy("Invariant")
+        PRECONDITION = "Precondition", gettext_lazy("Precondition")
+        POSTCONDITION = "Postcondition", gettext_lazy("Postcondition")
+
+    category = models.CharField(
+        max_length=13,
+        choices=SectionCategory.choices,
+    )
+
+    class SectionStatus(models.TextChoices):
+        PROVED = "Proved", gettext_lazy("Proved")
+        INVALID = "Invalid", gettext_lazy("Invalid")
+        COUNTEREXAMPLE = "Counterexample", gettext_lazy("Counterexample")
+        UNCHECKED = "Unchecked", gettext_lazy("Unchecked")
+
+    status = models.CharField(
+        max_length=14,
+        choices=SectionStatus.choices,
+    )
+
+    status_data = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.category + " section of file " + self.file_referred.name
