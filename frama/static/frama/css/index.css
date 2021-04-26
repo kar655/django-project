@@ -34,6 +34,7 @@ ul > li {
 }
 
 .col {
+    overflow-y: scroll;
     flex: 1;
     border: 2px solid var(--bar_color);
 }
@@ -79,6 +80,7 @@ ul > li {
 
 #elements {
     max-width: 20%;
+    /*overflow-y: scroll; TODO*/
 }
 
 #tabs {

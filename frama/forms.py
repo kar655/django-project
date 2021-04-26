@@ -19,11 +19,19 @@ class DirectoryForm(forms.ModelForm):
         exclude = ["timestamp", "is_valid", "user"]
 
 
+class DirectoryDeleteForm(forms.Form):
+    directory = forms.ModelChoiceField(queryset=Directory.objects.filter(is_valid=True))
+
+
 class FileForm(forms.ModelForm):
     class Meta:
         model = File
         fields = "__all__"
         exclude = ["timestamp", "is_valid", "user"]
+
+
+class FileDeleteForm(forms.Form):
+    file = forms.ModelChoiceField(queryset=File.objects.filter(is_valid=True))
 
 
 class FileSectionForm(forms.ModelForm):
