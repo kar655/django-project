@@ -65,3 +65,8 @@ class FileCreateView(CreateView):
         user = User.objects.get(pk=self.request.session["uname_id"])
         form.instance.user = user
         return super(FileCreateView, self).form_valid(form)
+
+
+def tree(request):
+    root_directory = Directory.objects.get(pk="ROOT")  # TODO
+    return render(request, "frama/directory_tree.html", {"recursive_structure": [root_directory]})

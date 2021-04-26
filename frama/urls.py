@@ -9,6 +9,7 @@ urlpatterns = [
     path('user/add', views.UserCreateView.as_view(), name="user-add"),
     # path('user/delete', views.UserSetInvalid.as_view(), name="user-delete"),
     path('directory/add', views.DirectoryCreateView.as_view(), name="directory-add"),
+    path('tree', views.tree, name="tree"),
 
     # path('add/file', views.add_file, name="addFile"),
 ]

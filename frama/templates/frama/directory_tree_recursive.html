@@ -1,0 +1,19 @@
+{% for entry in recursive_structure %}
+    {% if entry.is_valid %}
+        <li>
+            {{ entry }}
+            {% if entry.directory_set.all|length or entry.file_set.all|length %}
+                <ul>
+                    {% include "frama/directory_tree_recursive.html" with recursive_structure=entry.directory_set.all %}
+                    {% for file in entry.file_set.all %}
+                        {% if file.is_valid %}
+                            <li>
+                                {{ file }}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endif %}
+{% endfor %}
