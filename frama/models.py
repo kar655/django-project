@@ -2,7 +2,7 @@ from django.db import models
 
 
 class User(models.Model):
-    login = models.CharField(max_length=30, primary_key=True)
+    login = models.CharField(max_length=30, unique=True)
     name = models.CharField(max_length=30)
     password = models.CharField(max_length=50, help_text="Stored each password as an encrypted text")
 
@@ -18,7 +18,7 @@ class BasicInformation(models.Model):
 class Directory(BasicInformation):
     name = models.CharField(max_length=30, primary_key=True)
     description = models.CharField(max_length=100, null=True, blank=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_directory = models.ForeignKey('Directory', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
@@ -28,7 +28,7 @@ class Directory(BasicInformation):
 class File(BasicInformation):
     name = models.CharField(max_length=30, primary_key=True)
     description = models.CharField(max_length=100, null=True, blank=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     parent_directory = models.ForeignKey(Directory, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):

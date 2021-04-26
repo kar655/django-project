@@ -5,7 +5,10 @@ from . import views
 urlpatterns = [
     path('', views.index, name="index"),
     path('files', views.files_view, name="files"),
-    path('add/file', views.FileCreateView.as_view(), name="addFile"),
-    path('add/user', views.UserCreateView.as_view(), name="add-user"),
+    path('file/add', views.FileCreateView.as_view(), name="file-add"),
+    path('user/add', views.UserCreateView.as_view(), name="user-add"),
+    # path('user/delete', views.UserSetInvalid.as_view(), name="user-delete"),
+    path('directory/add', views.DirectoryCreateView.as_view(), name="directory-add"),
+
     # path('add/file', views.add_file, name="addFile"),
 ]

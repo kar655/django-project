@@ -2,18 +2,18 @@ from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.http import HttpResponse
 from django.views import generic
 from django.http import Http404
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
+from django import forms
 
+from .models import File, User, Directory
+from .forms import FileForm, UserForm, DirectoryForm
 
-from .models import File, User
-from .forms import FileForm
-
-
-# Create your views here.
 
 def index(request):
-    return HttpResponse("In index!")
+    request.session["uname_id"] = 1
+    print(request.session["uname_id"])
+    return HttpResponse("In index!", request)
 
 
 def files_view(request):
@@ -41,11 +41,27 @@ def files_view(request):
 
 class UserCreateView(CreateView):
     model = User
-    fields = "__all__"
+    form_class = UserForm
     success_url = reverse_lazy("index")
+
+
+class DirectoryCreateView(CreateView):
+    model = Directory
+    form_class = DirectoryForm
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        user = User.objects.get(pk=self.request.session["uname_id"])
+        form.instance.user = user
+        return super(DirectoryCreateView, self).form_valid(form)
 
 
 class FileCreateView(CreateView):
     model = File
-    fields = "__all__"
-    success_url = ""
+    form_class = FileForm
+    success_url = reverse_lazy("index")
+
+    def form_valid(self, form):
+        user = User.objects.get(pk=self.request.session["uname_id"])
+        form.instance.user = user
+        return super(FileCreateView, self).form_valid(form)
