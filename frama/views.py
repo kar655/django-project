@@ -17,6 +17,10 @@ def index(request):
     return HttpResponse("In index!", request)
 
 
+def main(request):
+    return render(request, "frama/index.html")
+
+
 def files_view(request):
     files = File.objects.all()
     print(files)
