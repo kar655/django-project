@@ -8,17 +8,25 @@ from django import forms
 
 from .models import File, User, Directory, FileSection
 from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm
-from .helpers import focus_on_program_elements_helper, get_current_user
+from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file
+
+
+def init(request):
+    request.session["uname_id"] = 1
+    init_database()
+    return HttpResponse("Initialized")
 
 
 def main(request, chosen_file=None):
     request.session["uname_id"] = 1
     file = None
     file_elements = None
+    file_content = None
 
     if chosen_file is not None:
         file = get_object_or_404(File, pk=chosen_file, is_valid=True)
         file_elements = focus_on_program_elements_helper(file)
+        file_content = read_file(file)
 
     root_directory = Directory.objects.get(pk="ROOT", is_valid=True)
 
@@ -26,6 +34,7 @@ def main(request, chosen_file=None):
         "recursive_structure": [root_directory],
         "chosen_file": file,
         "file_elements": file_elements,
+        "file_content": file_content,
     })
 
 

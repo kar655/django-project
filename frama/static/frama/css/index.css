@@ -39,7 +39,7 @@ ul > li {
     border: 2px solid var(--bar_color);
 }
 
-.col p {
+.col p, .col pre {
     padding: 10px;
 }
 
@@ -79,7 +79,7 @@ ul > li {
 }
 
 #elements {
-    max-width: 20%;
+    max-width: 40%;
     /*overflow-y: scroll; TODO*/
 }
 

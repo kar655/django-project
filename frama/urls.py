@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('init', views.init, name="init"),
     path('main', views.main, name="main"),
     path('main/<str:chosen_file>', views.main, name="main"),
     path('files', views.files_view, name="files"),
