@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.index, name="index"),
     path('main', views.main, name="main"),
+    path('main/<str:chosen_file>', views.main, name="main"),
     path('files', views.files_view, name="files"),
     path('file/add', views.FileCreateView.as_view(), name="file-add"),
     path('user/add', views.UserCreateView.as_view(), name="user-add"),

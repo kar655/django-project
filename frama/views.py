@@ -17,8 +17,17 @@ def index(request):
     return HttpResponse("In index!", request)
 
 
-def main(request):
-    return render(request, "frama/index.html")
+def main(request, chosen_file=None):
+    file = None
+    if chosen_file is not None:
+        file = get_object_or_404(File, pk=chosen_file)
+
+    root_directory = Directory.objects.get(pk="ROOT")
+
+    return render(request, "frama/index.html", {
+        "recursive_structure": [root_directory],
+        "chosen_file": file
+    })
 
 
 def files_view(request):
