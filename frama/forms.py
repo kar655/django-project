@@ -18,6 +18,10 @@ class DirectoryForm(forms.ModelForm):
         fields = "__all__"
         exclude = ["timestamp", "is_valid", "user"]
 
+    def __init__(self, *args, **kwargs):
+        super(DirectoryForm, self).__init__(*args, **kwargs)
+        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True)
+
 
 class DirectoryDeleteForm(forms.Form):
     directory = forms.ModelChoiceField(queryset=Directory.objects.filter(is_valid=True))
@@ -29,6 +33,10 @@ class FileForm(forms.ModelForm):
         fields = "__all__"
         exclude = ["timestamp", "is_valid", "user"]
 
+    def __init__(self, *args, **kwargs):
+        super(FileForm, self).__init__(*args, **kwargs)
+        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True)
+
 
 class FileDeleteForm(forms.Form):
     file = forms.ModelChoiceField(queryset=File.objects.filter(is_valid=True))
@@ -39,3 +47,7 @@ class FileSectionForm(forms.ModelForm):
         model = FileSection
         fields = "__all__"
         exclude = ["timestamp", "is_valid", "user"]
+
+    def __init__(self, *args, **kwargs):
+        super(FileSectionForm, self).__init__(*args, **kwargs)
+        self.fields["file_referred"].queryset = File.objects.filter(is_valid=True)
