@@ -19,14 +19,18 @@ def index(request):
 
 def main(request, chosen_file=None):
     file = None
+    file_elements = None
+
     if chosen_file is not None:
         file = get_object_or_404(File, pk=chosen_file)
+        file_elements = focus_on_program_elements_helper(file)
 
     root_directory = Directory.objects.get(pk="ROOT")
 
     return render(request, "frama/index.html", {
         "recursive_structure": [root_directory],
-        "chosen_file": file
+        "chosen_file": file,
+        "file_elements": file_elements,
     })
 
 
