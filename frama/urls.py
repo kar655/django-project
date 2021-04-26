@@ -11,6 +11,7 @@ urlpatterns = [
     path('directory/add', views.DirectoryCreateView.as_view(), name="directory-add"),
     path('tree', views.tree, name="tree"),
     path('tree/<str:chosen_file>', views.tree_highlight, name="tree-highlight"),
+    path('focus/<str:chosen_file>', views.focus_on_program_elements, name="focus-file"),
 
     # path('add/file', views.add_file, name="addFile"),
 ]

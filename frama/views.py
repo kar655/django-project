@@ -8,7 +8,7 @@ from django import forms
 
 from .models import File, User, Directory
 from .forms import FileForm, UserForm, DirectoryForm
-
+from .helpers import focus_on_program_elements_helper
 
 def index(request):
     request.session["uname_id"] = 1
@@ -82,3 +82,9 @@ def tree_highlight(request, chosen_file):
         "recursive_structure": [root_directory],
         "chosen_file": file
     })
+
+
+def focus_on_program_elements(request, chosen_file):
+    file = get_object_or_404(File, pk=chosen_file)
+
+    return HttpResponse(focus_on_program_elements_helper(file))
