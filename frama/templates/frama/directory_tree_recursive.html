@@ -1,6 +1,8 @@
+
 {% for entry in recursive_structure %}
     {% if entry.is_valid %}
         <li>
+        {% spaceless %}
             {{ entry }}
             {% if entry.directory_set.all|length or entry.file_set.all|length %}
                 <ul>
@@ -8,18 +10,15 @@
                     {% for file in entry.file_set.all %}
                         {% if file.is_valid %}
                             {% if chosen_file == file %}
-                                <li style="color:red">
-                            {% else %}
-                                <li>
+                                <li style="color:red">{% else %}<li>
                             {% endif %}
-                            <a href="{% url 'main' file.name %}">
-                                {{ file }}
-                            </a>
-                            </li>
+                            <a href="{% url 'main' file.name %}">{{ file }}</a>
+                        </li>
                         {% endif %}
                     {% endfor %}
                 </ul>
             {% endif %}
+        {% endspaceless %}
         </li>
     {% endif %}
 {% endfor %}

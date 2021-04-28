@@ -1,9 +1,22 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'frama/css/file_sections.css' %}">
 <pre>
 <code>
-{% if file_content %}
-{{ file_content }}
-{% else %}
-Please choose a file
-{% endif %}
+{% if file_content %}{% for section_type, line in file_content %}<div id="line-{{ forloop.counter }}" {% if section_type %} class="{{ section_type }}"{% endif %}>{{ line }}</div>{% endfor %}{% else %}Please choose a file{% endif %}
 </code>
 </pre>
+
+{#{% load static %}#}
+{#<link rel="stylesheet" href="{% static 'frama/css/file_sections.css' %}">#}
+{#<pre>#}
+{#<code>#}
+{#    {% if file_content %}#}
+{#        {% for section_type, line in file_content %}#}
+{#            <div id="line-{{ forloop.counter }}" {% if section_type %} class="{{ section_type }}"{% endif %}>{{ line }}#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#    {% else %}#}
+{#        Please choose a file#}
+{#    {% endif %}#}
+{#</code>#}
+{#</pre>#}

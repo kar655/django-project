@@ -1,0 +1,28 @@
+.Procedure {
+    color: aliceblue;
+}
+
+.Property {
+    color: lawngreen;
+}
+
+.Lemma {
+    color: violet;
+}
+
+.Assertion {
+    color: navajowhite;
+}
+
+.Invariant {
+    color: teal;
+}
+
+.Precondition {
+    color: darkmagenta;
+}
+
+.Postcondition {
+    color: darkblue;
+}
+
