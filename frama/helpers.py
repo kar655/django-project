@@ -75,42 +75,30 @@ def focus_on_program_elements_helper(file: File) -> str:
     # return result.stdout + result.stderr
 
 
-def read_file(file: File) -> str:
-    #         PROCEDURE = "Procedure", gettext_lazy("Procedure")
-    #         PROPERTY = "Property", gettext_lazy("Property")
-    #         LEMMA = "Lemma", gettext_lazy("Lemma")
-    #         ASSERTION = "Assertion", gettext_lazy("Assertion")
-    #         INVARIANT = "Invariant", gettext_lazy("Invariant")
-    #         PRECONDITION = "Precondition", gettext_lazy("Precondition")
-    #         POSTCONDITION = "Postcondition", gettext_lazy("Postcondition")
+def read_file(file: File):
     sections = {
         "predicate": FileSection.SectionCategory.PROCEDURE,
         "requires": FileSection.SectionCategory.PRECONDITION,
         "ensures": FileSection.SectionCategory.POSTCONDITION,
         "assert": FileSection.SectionCategory.ASSERTION,
         "lemma": FileSection.SectionCategory.LEMMA,
-        "loop invariant": FileSection.SectionCategory.INVARIANT
-        # "logic real": FileSection.SectionCategory
+        "loop": FileSection.SectionCategory.INVARIANT
     }
 
     file.file_field.open("r")
-    # lines = file.file_field.read()
-    lines = "EMPTY"
 
     result = []
     for line in file.file_field.readlines():
-        match_results = re.search(r"@ +([a-z]+(?: [a-z]+)?)", line)
+        match_results = re.search(r"@ +([a-z]+)", line)
         if match_results is not None:
             match = match_results.group(1)
             if match in sections:
                 result.append((sections[match], line))
-            else:
-                result.append((None, line))
-        else:
-            result.append((None, line))
+                continue
+
+        result.append((None, line))
 
     file.file_field.close()
-    # pprint(result)
     return result
 
 
