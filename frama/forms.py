@@ -51,3 +51,17 @@ class FileSectionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FileSectionForm, self).__init__(*args, **kwargs)
         self.fields["file_referred"].queryset = File.objects.filter(is_valid=True)
+
+
+class TabProversForm(forms.Form):
+    prover = forms.ChoiceField(choices=(
+        ("Alt-Ergo", "Alt-Ergo"),
+        ("Z3", "Z3"),
+        ("CVC4", "CVC4"),
+    ))
+
+    def clean_prover(self):
+        data = self.cleaned_data['prover']
+        print(f"SAVING {data}")
+
+        return data

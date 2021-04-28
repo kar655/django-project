@@ -13,6 +13,20 @@ def init_database():
     return
 
 
+def get_result(file: File):
+    result = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.file_field.path],
+                            text=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+
+    print("get_result stdout =====")
+    print(result.stdout)
+    print("get_result stderr =====")
+    print(result.stderr)
+
+    return result.stdout, result.stderr
+
+
 def focus_on_program_elements_helper(file: File) -> str:
     result = subprocess.run(["frama-c", "-wp", "-wp-print", file.file_field.path],
                             text=True,
@@ -22,37 +36,43 @@ def focus_on_program_elements_helper(file: File) -> str:
     # print(f"stdout = {result.stdout}")
     # print(f"stderr = {result.stderr}")
     #
-    # def parse_between_dashed_lines(process_output: str):
-    #     parsed = []
-    #     current = []
-    #     for line in process_output.splitlines(keepends=True):
-    #         if re.match(r"-+", line):
-    #             parsed.append(current)
-    #             current = []
-    #         else:
-    #             matches = re.search(r"line ([\d]+)", line)
-    #             if matches is not None:
-    #                 line_number = matches.group(1)
-    #                 print(f"============LINE NUMBER = {line_number}")
-    #
-    #             current.append(line)
-    #
-    #     if len(current) > 0:
-    #         parsed.append(current)
-    #
-    #     parsed_return = []
-    #
-    #     for section in parsed:
-    #         parsed_return.append(''.join(section))
-    #
-    #     return parsed_return
-    #
-    # parsed = parse_between_dashed_lines(result.stdout)
+    def parse_between_dashed_lines(process_output: str):
+        line_tooltip = {}
+        parsed = []
+        current = []
+        line_number = None
+
+        for line in process_output.splitlines(keepends=True):
+            if re.match(r"-+", line):
+                parsed.append((line_number, ''.join(current)))
+                line_tooltip[line_number] = ''.join(current)
+                current = []
+                line_number = None
+            else:
+                matches = re.search(r"line ([\d]+)", line)
+                if matches is not None:
+                    line_number = int(matches.group(1))
+                    print(f"============LINE NUMBER = {line_number}")
+
+                current.append(line)
+
+        if len(current) > 0:
+            parsed.append((line_number, ''.join(current)))
+            line_tooltip[line_number] = ''.join(current)
+
+        pprint(line_tooltip)
+
+        return line_tooltip
+        # return parsed
+
+    parsed = parse_between_dashed_lines(result.stdout)
+    pprint(parsed)
     # for section in parsed:
     #     print("SECTION:")
     #     print(section)
 
-    return result.stdout + result.stderr
+    return result.stdout + result.stderr, parsed
+    # return result.stdout + result.stderr
 
 
 def read_file(file: File) -> str:
@@ -90,7 +110,7 @@ def read_file(file: File) -> str:
             result.append((None, line))
 
     file.file_field.close()
-    pprint(result)
+    # pprint(result)
     return result
 
 

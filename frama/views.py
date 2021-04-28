@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django import forms
 
 from .models import File, User, Directory, FileSection
-from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm
+from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, TabProversForm
 from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file
 
 
@@ -21,11 +21,13 @@ def main(request, chosen_file=None):
     request.session["uname_id"] = 1
     file = None
     file_elements = None
+    line_tooltips = None
     file_content = None
+    chosen_tab = TabProversForm()
 
     if chosen_file is not None:
         file = get_object_or_404(File, pk=chosen_file, is_valid=True)
-        file_elements = focus_on_program_elements_helper(file)
+        file_elements, line_tooltips = focus_on_program_elements_helper(file)
         file_content = read_file(file)
 
     root_directory = Directory.objects.get(pk="ROOT", is_valid=True)
@@ -34,7 +36,9 @@ def main(request, chosen_file=None):
         "recursive_structure": [root_directory],
         "chosen_file": file,
         "file_elements": file_elements,
+        "line_tooltips": line_tooltips,
         "file_content": file_content,
+        "chosen_tab": chosen_tab,
     })
 
 
