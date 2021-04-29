@@ -1,5 +1,4 @@
 import re
-from pprint import pprint
 import subprocess
 
 from .models import File, User, Directory, FileSection
@@ -15,7 +14,6 @@ def init_database():
 
 def get_result(file: File, command: str):
     # result = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.file_field.path],
-    # result = subprocess.run(["frama-c", "-wp", file.file_field.path],
     result = subprocess.run(command,
                             shell=True,
                             text=True,
@@ -38,9 +36,6 @@ def focus_on_program_elements_helper(file: File):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
 
-    # print(f"stdout = {result.stdout}")
-    # print(f"stderr = {result.stderr}")
-    #
     def parse_between_dashed_lines(process_output: str):
         line_tooltip = {}
         parsed = []
@@ -57,7 +52,6 @@ def focus_on_program_elements_helper(file: File):
                 matches = re.search(r"line ([\d]+)", line)
                 if matches is not None:
                     line_number = int(matches.group(1))
-                    # print(f"============LINE NUMBER = {line_number}")
 
                 current.append(line)
 
@@ -65,19 +59,11 @@ def focus_on_program_elements_helper(file: File):
             parsed.append((line_number, ''.join(current)))
             line_tooltip[line_number] = ''.join(current)
 
-        # pprint(line_tooltip)
-
         return line_tooltip
-        # return parsed
 
     parsed = parse_between_dashed_lines(result.stdout)
-    # pprint(parsed)
-    # for section in parsed:
-    #     print("SECTION:")
-    #     print(section)
 
     return result.stdout + result.stderr, parsed
-    # return result.stdout + result.stderr
 
 
 def read_file(file: File):

@@ -37,11 +37,6 @@ class File(BasicInformation):
         return "File: " + self.name
 
 
-# class SectionData(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     status_data = models.CharField(max_length=100)
-
-
 class FileSection(BasicInformation):
     file_referred = models.ForeignKey(File, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

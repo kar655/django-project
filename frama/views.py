@@ -1,16 +1,14 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views import generic
 from django.http import Http404
-from django.views.generic import TemplateView, View
-from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django import forms
+from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView, FormView
 
-from .models import File, User, Directory, FileSection
 from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
-    TabProversForm, TabVCsForm, ChosenTab
+    ChosenTab
 from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file, get_result
+from .models import File, User, Directory, FileSection
 
 
 def init(request):
@@ -29,10 +27,6 @@ class MainView(TemplateView):
     chosen_tab_name = None
     root_directory = None
     is_result = False
-
-    def print_session(self, request):
-        print(f"provers = {request.session.get('provers', None)}")
-        print(f"vcs = {request.session.get('vcs', None)}")
 
     def check_chosen_tab(self):
         if self.chosen_tab is not None and not ChosenTab.has_value(self.chosen_tab):
@@ -70,7 +64,6 @@ class MainView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        self.print_session(request)
         self.chosen_tab = kwargs.get('chosen_tab', None)
         self.check_chosen_tab()
         self.load_chosen_tab()
@@ -103,12 +96,6 @@ class MainView(TemplateView):
             self.chosen_tab.add_to_session(request.session)
 
         return super().get(request, *args, **kwargs)
-
-
-def files_view(request):
-    files = File.objects.all()
-    print(files)
-    return HttpResponse(str(files))
 
 
 class UserCreateView(CreateView):
@@ -159,29 +146,6 @@ class FileDeleteView(FormView):
         file.is_valid = False
         file.save()
         return super(FileDeleteView, self).form_valid(form)
-
-
-def tree(request):
-    root_directory = Directory.objects.get(pk="ROOT")  # TODO
-    return render(request, "frama/directory_tree.html", {
-        "recursive_structure": [root_directory]
-    })
-
-
-def tree_highlight(request, chosen_file):
-    file = get_object_or_404(File, pk=chosen_file)
-
-    root_directory = Directory.objects.get(pk="ROOT")
-    return render(request, "frama/directory_tree.html", {
-        "recursive_structure": [root_directory],
-        "chosen_file": file
-    })
-
-
-def focus_on_program_elements(request, chosen_file):
-    file = get_object_or_404(File, pk=chosen_file)
-
-    return HttpResponse(focus_on_program_elements_helper(file))
 
 
 class FileSectionCreateView(CreateView):
