@@ -1,5 +1,11 @@
-<form method="post">
-    {% csrf_token %}
+{% spaceless %}
+{% if is_result %}
     {{ chosen_tab }}
-    <button type="submit">Choose</button>
-</form>
+{% else %}
+    <form method="post">
+        {% csrf_token %}
+        {{ chosen_tab }}
+        <button type="submit">Choose</button>
+    </form>
+{% endif %}
+{% endspaceless %}

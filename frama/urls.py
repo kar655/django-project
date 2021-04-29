@@ -4,8 +4,10 @@ from . import views
 
 urlpatterns = [
     path('init', views.init, name="init"),
-    path('main', views.main, name="main"),
-    path('main/<str:chosen_tab>/<str:chosen_file>', views.main, name="main-tab-file"),
+    # path('main', views.main, name="main"),
+    path('main', views.MainView.as_view(), name="main"),
+    # path('main/<str:chosen_tab>/<str:chosen_file>', views.main, name="main-tab-file"),
+    path('main/<str:chosen_tab>/<str:chosen_file>', views.MainView.as_view(), name="main-tab-file"),
     path('files', views.files_view, name="files"),
     path('file/add', views.FileCreateView.as_view(), name="file-add"),
     path('file/delete', views.FileDeleteView.as_view(), name="file-delete"),

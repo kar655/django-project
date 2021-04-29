@@ -55,27 +55,27 @@ class FileSectionForm(forms.ModelForm):
 
 
 class TabProversForm(forms.Form):
-    prover = forms.ChoiceField(choices=(
+    provers = forms.ChoiceField(choices=(
         ("Alt-Ergo", "Alt-Ergo"),
         ("Z3", "Z3"),
         ("CVC4", "CVC4"),
     ))
 
     def clean_prover(self):
-        data = self.cleaned_data['prover']
+        data = self.cleaned_data['provers']
         print(f"SAVING {data}")
 
         return data
 
 
 class TabVCsForm(forms.Form):
-    vc = forms.ChoiceField(choices=(
+    vcs = forms.ChoiceField(choices=(
         ("Opcja 1", "Opcja 1"),
         ("Opcja 2", "Opcja 2"),
     ))
 
     def clean_vc(self):
-        data = self.cleaned_data['vc']
+        data = self.cleaned_data['vcs']
         print(f"SAVING {data}")
 
         return data
@@ -98,6 +98,7 @@ class ChosenTab(str, Enum):
                 return "RESULT XDDDDDdd"
 
             return helper
+            # return TabVCsForm
 
     @classmethod
     def has_value(cls, value):
