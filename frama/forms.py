@@ -94,11 +94,10 @@ class ChosenTab(str, Enum):
         elif value == ChosenTab.VCS:
             return TabVCsForm
         else:
-            def helper(*args, **kwargs):
-                return "RESULT XDDDDDdd"
+            def get_tab_results(provers, vcs, file_path):
+                return f"frama-c -wp -wp-prover {provers} -wp-prop={vcs} {file_path}"
 
-            return helper
-            # return TabVCsForm
+            return get_tab_results
 
     @classmethod
     def has_value(cls, value):

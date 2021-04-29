@@ -74,10 +74,17 @@ class MainView(TemplateView):
         self.chosen_tab = kwargs.get('chosen_tab', None)
         self.check_chosen_tab()
         self.load_chosen_tab()
-        self.chosen_tab = self.chosen_tab()
-
         chosen_file = kwargs.get('chosen_file', None)
         self.load_custom_data(chosen_file)
+
+        if self.is_result:
+            self.chosen_tab = self.chosen_tab(
+                provers=request.session.get('provers', None),
+                vcs=request.session.get('vcs', None),
+                file_path=self.file.file_field.path if self.file is not None else "no file",
+            )
+        else:
+            self.chosen_tab = self.chosen_tab()
 
         return super().get(request, *args, **kwargs)
 
@@ -86,49 +93,13 @@ class MainView(TemplateView):
         self.check_chosen_tab()
         self.load_chosen_tab()
         self.chosen_tab = self.chosen_tab(request.POST)
-        if self.chosen_tab.is_valid():
-            request.session[self.chosen_tab_name] = self.chosen_tab.cleaned_data[self.chosen_tab_name]
-            print("WORKS ")
-            print(f"Got {self.chosen_tab.cleaned_data[self.chosen_tab_name]}")
-
         chosen_file = kwargs.get('chosen_file', None)
         self.load_custom_data(chosen_file)
 
+        if self.chosen_tab.is_valid():
+            request.session[self.chosen_tab_name] = self.chosen_tab.cleaned_data[self.chosen_tab_name]
+
         return super().get(request, *args, **kwargs)
-
-
-def main(request, chosen_tab=None, chosen_file=None):
-    request.session["uname_id"] = 1
-    file = None
-    file_elements = None
-    line_tooltips = None
-    file_content = None
-    chosen_tab_name = chosen_tab
-
-    if chosen_tab is not None and not ChosenTab.has_value(chosen_tab):
-        raise Http404(f"No tab matches value {chosen_tab}")
-
-    chosen_tab = ChosenTab.give_form(chosen_tab)(request.POST)
-
-    # testowanie = TabProversForm()
-    print(f"In {chosen_tab.is_valid()})")
-    # print(f"got {chosen_tab.cleaned_data['vcs']}")
-
-    if chosen_file is not None:
-        file = get_object_or_404(File, pk=chosen_file, is_valid=True)
-        file_elements, line_tooltips = focus_on_program_elements_helper(file)
-        file_content = read_file(file)
-
-    root_directory = Directory.objects.get(pk="ROOT", is_valid=True)
-
-    return render(request, "frama/index.html", {
-        "recursive_structure": [root_directory],
-        "chosen_file": file,
-        "file_elements": file_elements,
-        "line_tooltips": line_tooltips,
-        "file_content": file_content,
-        "chosen_tab": chosen_tab,
-    })
 
 
 def files_view(request):

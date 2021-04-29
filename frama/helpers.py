@@ -27,7 +27,7 @@ def get_result(file: File):
     return result.stdout, result.stderr
 
 
-def focus_on_program_elements_helper(file: File) -> str:
+def focus_on_program_elements_helper(file: File):
     result = subprocess.run(["frama-c", "-wp", "-wp-print", file.file_field.path],
                             text=True,
                             stdout=subprocess.PIPE,
