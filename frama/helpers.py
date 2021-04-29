@@ -52,7 +52,7 @@ def focus_on_program_elements_helper(file: File) -> str:
                 matches = re.search(r"line ([\d]+)", line)
                 if matches is not None:
                     line_number = int(matches.group(1))
-                    print(f"============LINE NUMBER = {line_number}")
+                    # print(f"============LINE NUMBER = {line_number}")
 
                 current.append(line)
 
@@ -60,13 +60,13 @@ def focus_on_program_elements_helper(file: File) -> str:
             parsed.append((line_number, ''.join(current)))
             line_tooltip[line_number] = ''.join(current)
 
-        pprint(line_tooltip)
+        # pprint(line_tooltip)
 
         return line_tooltip
         # return parsed
 
     parsed = parse_between_dashed_lines(result.stdout)
-    pprint(parsed)
+    # pprint(parsed)
     # for section in parsed:
     #     print("SECTION:")
     #     print(section)

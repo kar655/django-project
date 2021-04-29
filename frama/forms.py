@@ -1,4 +1,5 @@
 from django import forms
+from enum import Enum, unique
 
 from .models import User, File, Directory, FileSection
 
@@ -65,3 +66,39 @@ class TabProversForm(forms.Form):
         print(f"SAVING {data}")
 
         return data
+
+
+class TabVCsForm(forms.Form):
+    vc = forms.ChoiceField(choices=(
+        ("Opcja 1", "Opcja 1"),
+        ("Opcja 2", "Opcja 2"),
+    ))
+
+    def clean_vc(self):
+        data = self.cleaned_data['vc']
+        print(f"SAVING {data}")
+
+        return data
+
+
+@unique
+class ChosenTab(str, Enum):
+    PROVERS = "provers"
+    VCS = "vcs"
+    RESULT = "result"
+
+    @staticmethod
+    def give_form(value):
+        if value == ChosenTab.PROVERS:
+            return TabProversForm
+        elif value == ChosenTab.VCS:
+            return TabVCsForm
+        else:
+            def helper(*args, **kwargs):
+                return "RESULT XDDDDDdd"
+
+            return helper
+
+    @classmethod
+    def has_value(cls, value):
+        return value in cls._value2member_map_

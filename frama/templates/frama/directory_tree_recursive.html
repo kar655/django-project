@@ -12,7 +12,7 @@
                             {% if chosen_file == file %}
                                 <li style="color:red">{% else %}<li>
                             {% endif %}
-                            <a href="{% url 'main' file.name %}">{{ file }}</a>
+                            <a href="{% url 'main-tab-file' 'result' file.name %}">{{ file }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}

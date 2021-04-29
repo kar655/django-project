@@ -36,9 +36,9 @@
             </div>
             <div id="tabs">
                 <div class="topnav">
-                    <a href="">PROVERS</a>
-                    <a href="">VCs</a>
-                    <a href="">RESULT</a>
+                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'provers' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">PROVERS</a>
+                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'vcs' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">VCs</a>
+                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'result' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">RESULT</a>
                 </div>
                 <div>
                     {% include "frama/tab_data.html" %}

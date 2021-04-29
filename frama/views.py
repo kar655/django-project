@@ -7,7 +7,8 @@ from django.urls import reverse_lazy
 from django import forms
 
 from .models import File, User, Directory, FileSection
-from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, TabProversForm
+from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
+    TabProversForm, TabVCsForm, ChosenTab
 from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file
 
 
@@ -17,13 +18,17 @@ def init(request):
     return HttpResponse("Initialized")
 
 
-def main(request, chosen_file=None):
+def main(request, chosen_tab=None, chosen_file=None):
     request.session["uname_id"] = 1
     file = None
     file_elements = None
     line_tooltips = None
     file_content = None
-    chosen_tab = TabProversForm()
+
+    if chosen_tab is not None and not ChosenTab.has_value(chosen_tab):
+        raise Http404(f"No tab matches value {chosen_tab}")
+
+    chosen_tab = ChosenTab.give_form(chosen_tab)(request.POST)
 
     if chosen_file is not None:
         file = get_object_or_404(File, pk=chosen_file, is_valid=True)
