@@ -80,7 +80,8 @@ class MainView(TemplateView):
         if self.is_result:
             self.chosen_tab = self.chosen_tab(
                 provers=request.session.get('provers', None),
-                vcs=request.session.get('vcs', None),
+                use_wp_rte=request.session.get('use_wp_rte', None),
+                wp_prop_flag=request.session.get('wp_prop_flag', None),
                 file_path=self.file.file_field.path if self.file is not None else "no file",
             )
         else:
@@ -97,7 +98,7 @@ class MainView(TemplateView):
         self.load_custom_data(chosen_file)
 
         if self.chosen_tab.is_valid():
-            request.session[self.chosen_tab_name] = self.chosen_tab.cleaned_data[self.chosen_tab_name]
+            self.chosen_tab.add_to_session(request.session)
 
         return super().get(request, *args, **kwargs)
 

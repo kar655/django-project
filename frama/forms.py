@@ -61,24 +61,17 @@ class TabProversForm(forms.Form):
         ("CVC4", "CVC4"),
     ))
 
-    def clean_prover(self):
-        data = self.cleaned_data['provers']
-        print(f"SAVING {data}")
-
-        return data
+    def add_to_session(self, session):
+        session['provers'] = self.cleaned_data['provers']
 
 
 class TabVCsForm(forms.Form):
-    vcs = forms.ChoiceField(choices=(
-        ("Opcja 1", "Opcja 1"),
-        ("Opcja 2", "Opcja 2"),
-    ))
+    use_wp_rte = forms.BooleanField(required=False)
+    wp_prop_flag = forms.CharField(required=False, max_length=30)
 
-    def clean_vc(self):
-        data = self.cleaned_data['vcs']
-        print(f"SAVING {data}")
-
-        return data
+    def add_to_session(self, session):
+        session['use_wp_rte'] = self.cleaned_data['use_wp_rte']
+        session['wp_prop_flag'] = self.cleaned_data['wp_prop_flag']
 
 
 @unique
@@ -94,8 +87,13 @@ class ChosenTab(str, Enum):
         elif value == ChosenTab.VCS:
             return TabVCsForm
         else:
-            def get_tab_results(provers, vcs, file_path):
-                return f"frama-c -wp -wp-prover {provers} -wp-prop={vcs} {file_path}"
+            def get_tab_results(provers, use_wp_rte, wp_prop_flag, file_path):
+                if wp_prop_flag is None or len(wp_prop_flag) == 0:
+                    wp_prop_flag = None
+                else:
+                    wp_prop_flag = "\"" + wp_prop_flag + "\""
+
+                return f"frama-c -wp -wp-prover {provers}{f' -wp-prop={wp_prop_flag}' if wp_prop_flag else ''}{' -wp-rte' if use_wp_rte else ''} -wp-log=\"r:result.txt\" {file_path}"
 
             return get_tab_results
 
