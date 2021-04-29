@@ -40,7 +40,7 @@
                     <a href="{% if chosen_file %}{% url 'main-tab-file' 'vcs' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">VCs</a>
                     <a href="{% if chosen_file %}{% url 'main-tab-file' 'result' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">RESULT</a>
                 </div>
-                <div>
+                <div id="tabs-data">
                     {% include "frama/tab_data.html" %}
                 </div>
             </div>

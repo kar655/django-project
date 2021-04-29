@@ -10,7 +10,7 @@ from django import forms
 from .models import File, User, Directory, FileSection
 from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     TabProversForm, TabVCsForm, ChosenTab
-from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file
+from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file, get_result
 
 
 def init(request):
@@ -84,6 +84,8 @@ class MainView(TemplateView):
                 wp_prop_flag=request.session.get('wp_prop_flag', None),
                 file_path=self.file.file_field.path if self.file is not None else "no file",
             )
+            used_command = f"Results of: {self.chosen_tab}\n\n\n"
+            self.chosen_tab = used_command + get_result(self.file, self.chosen_tab)
         else:
             self.chosen_tab = self.chosen_tab()
 

@@ -1,6 +1,6 @@
 {% spaceless %}
 {% if is_result %}
-    {{ chosen_tab }}
+<pre>{{ chosen_tab }}</pre>
 {% else %}
     <form method="post">
         {% csrf_token %}

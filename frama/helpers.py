@@ -13,18 +13,23 @@ def init_database():
     return
 
 
-def get_result(file: File):
-    result = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.file_field.path],
+def get_result(file: File, command: str):
+    # result = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.file_field.path],
+    # result = subprocess.run(["frama-c", "-wp", file.file_field.path],
+    result = subprocess.run(command,
+                            shell=True,
                             text=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
 
-    print("get_result stdout =====")
+    print("get_result stdout ====='''")
     print(result.stdout)
-    print("get_result stderr =====")
+    print("'''")
+    print("get_result stderr ====='''")
     print(result.stderr)
+    print("'''")
 
-    return result.stdout, result.stderr
+    return result.stdout
 
 
 def focus_on_program_elements_helper(file: File):
