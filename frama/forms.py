@@ -56,9 +56,9 @@ class FileSectionForm(forms.ModelForm):
 
 class TabProversForm(forms.Form):
     provers = forms.ChoiceField(choices=(
-        ("Alt-Ergo", "Alt-Ergo"),
-        ("Z3", "Z3"),
-        ("CVC4", "CVC4"),
+        ("alt-ergo", "Alt-Ergo"),
+        ("z3", "Z3"),
+        ("cvc4", "CVC4"),
     ))
 
     def add_to_session(self, session):
