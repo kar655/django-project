@@ -12,20 +12,12 @@ def init_database():
     return
 
 
-def get_result(file: File, command: str):
-    # result = subprocess.run(["frama-c", "-wp", "-wp-log=r:result.txt", file.file_field.path],
+def get_result(command: str):
     result = subprocess.run(command,
                             shell=True,
                             text=True,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-
-    print("get_result stdout ====='''")
-    print(result.stdout)
-    print("'''")
-    print("get_result stderr ====='''")
-    print(result.stderr)
-    print("'''")
 
     return result.stdout
 

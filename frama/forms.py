@@ -93,7 +93,7 @@ class ChosenTab(str, Enum):
                 else:
                     wp_prop_flag = "\"" + wp_prop_flag + "\""
 
-                return f"frama-c -wp -wp-prover {provers}{f' -wp-prop={wp_prop_flag}' if wp_prop_flag else ''}{' -wp-rte' if use_wp_rte else ''} -wp-log=\"r:result.txt\" {file_path}"
+                return f"frama-c -wp{f' -wp-prover {provers}' if provers is not None else ''}{f' -wp-prop={wp_prop_flag}' if wp_prop_flag else ''}{' -wp-rte' if use_wp_rte else ''} -wp-log=\"r:result.txt\" {file_path}"
 
             return get_tab_results
 

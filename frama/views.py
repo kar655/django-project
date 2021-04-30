@@ -35,7 +35,6 @@ class MainView(TemplateView):
     def load_chosen_tab(self):
         self.chosen_tab_name = self.chosen_tab
         self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
-        print(f"chosen_tab_name={self.chosen_tab_name}  is_result={self.is_result}")
         self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
 
     def load_custom_data(self, chosen_file):
@@ -78,7 +77,7 @@ class MainView(TemplateView):
                 file_path=self.file.file_field.path if self.file is not None else "no file",
             )
             used_command = f"Results of: {self.chosen_tab}\n\n\n"
-            self.chosen_tab = used_command + get_result(self.file, self.chosen_tab)
+            self.chosen_tab = used_command + get_result(self.chosen_tab)
         else:
             self.chosen_tab = self.chosen_tab()
 
@@ -121,8 +120,20 @@ class DirectoryDeleteView(FormView):
 
     def form_valid(self, form):
         directory = form.cleaned_data['directory']
-        directory.is_valid = False
-        directory.save()
+
+        def recursively_clear(direc: Directory):
+            direc.is_valid = False
+            direc.save()
+
+            for file in direc.file_set.all():
+                file.is_valid = False
+                file.save()
+
+            for child_directory in direc.directory_set.all():
+                recursively_clear(child_directory)
+
+        recursively_clear(directory)
+
         return super(DirectoryDeleteView, self).form_valid(form)
 
 
