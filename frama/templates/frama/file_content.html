@@ -6,18 +6,3 @@
 {% if file_content %}{% for section_type, line in file_content %}<div id="line-{{ forloop.counter }}" class="tooltip{% if section_type %} {{ section_type }}{% endif %}">{{ line }}{% if forloop.counter in line_tooltips %}<span class="tooltiptext">{{ line_tooltips|dict_item:forloop.counter }}</span>{% endif %}</div>{% endfor %}{% else %}Please choose a file{% endif %}
 </code>
 </pre>
-
-{#{% load static %}#}
-{#<link rel="stylesheet" href="{% static 'frama/css/file_sections.css' %}">#}
-{#<pre>#}
-{#<code>#}
-{#    {% if file_content %}#}
-{#        {% for section_type, line in file_content %}#}
-{#            <div id="line-{{ forloop.counter }}" {% if section_type %} class="{{ section_type }}"{% endif %}>{{ line }}#}
-{#            </div>#}
-{#        {% endfor %}#}
-{#    {% else %}#}
-{#        Please choose a file#}
-{#    {% endif %}#}
-{#</code>#}
-{#</pre>#}
