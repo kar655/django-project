@@ -1,4 +1,5 @@
 {% spaceless %}
+{% if chosen_file %}
 {% if is_result %}
 <pre>{{ chosen_tab }}</pre>
 {% else %}
@@ -7,5 +8,8 @@
         {{ chosen_tab }}
         <button type="submit">Choose</button>
     </form>
+{% endif %}
+{% else %}
+    Please choose a file
 {% endif %}
 {% endspaceless %}

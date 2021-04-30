@@ -34,7 +34,7 @@ class MainView(TemplateView):
 
     def load_chosen_tab(self):
         self.chosen_tab_name = self.chosen_tab
-        self.is_result = self.chosen_tab_name == ChosenTab.RESULT
+        self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
         print(f"chosen_tab_name={self.chosen_tab_name}  is_result={self.is_result}")
         self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
 
