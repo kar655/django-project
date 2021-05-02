@@ -57,7 +57,7 @@ class RegisterView(CreateView):
 class MainView(TemplateView):
     template_name = "frama/index.html"
     file = None
-    file_elements = None
+    file_elements_sections = None
     line_tooltips = None
     file_content = None
     chosen_tab = None
@@ -79,11 +79,11 @@ class MainView(TemplateView):
 
         if chosen_file is not None:
             self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
-            self.file_elements, self.line_tooltips = focus_on_program_elements_helper(self.file)
+            self.file_elements_sections, self.line_tooltips = focus_on_program_elements_helper(self.file)
             self.file_content = read_file(self.file)
         else:
             self.file = None
-            self.file_elements = None
+            self.file_elements_sections = None
             self.line_tooltips = None
             self.file_content = None
 
@@ -91,7 +91,7 @@ class MainView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['recursive_structure'] = [self.root_directory]
         context['chosen_file'] = self.file
-        context['file_elements'] = self.file_elements
+        context['file_elements_sections'] = self.file_elements_sections
         context['line_tooltips'] = self.line_tooltips
         context['file_content'] = self.file_content
         context['chosen_tab'] = self.chosen_tab

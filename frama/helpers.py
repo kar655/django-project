@@ -1,5 +1,6 @@
 import re
 import subprocess
+from pprint import pprint
 from django.contrib.auth.models import User
 
 from .models import File, Directory, FileSection
@@ -31,34 +32,34 @@ def focus_on_program_elements_helper(file: File):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
 
-    def parse_between_dashed_lines(process_output: str):
-        line_tooltip = {}
-        parsed = []
-        current = []
-        line_number = None
+    line_tooltip = {}
+    sections = []
+    current = []
+    line_number = None
 
-        for line in process_output.splitlines(keepends=True):
-            if re.match(r"-+", line):
-                parsed.append((line_number, ''.join(current)))
-                line_tooltip[line_number] = ''.join(current)
-                current = []
-                line_number = None
-            else:
-                matches = re.search(r"line ([\d]+)", line)
-                if matches is not None:
-                    line_number = int(matches.group(1))
-
-                current.append(line)
-
-        if len(current) > 0:
-            parsed.append((line_number, ''.join(current)))
+    for line in result.stdout.splitlines(keepends=True):
+        if re.match(r"-+", line):
+            # sections.append(''.join(current))
             line_tooltip[line_number] = ''.join(current)
+            current.append(line)
+            sections.append((line_number, ''.join(current)))
+            current = []
+            line_number = None
+        else:
+            matches = re.search(r"line ([\d]+)", line)
+            if matches is not None:
+                line_number = int(matches.group(1))
 
-        return line_tooltip
+            current.append(line)
 
-    parsed = parse_between_dashed_lines(result.stdout)
+    if len(current) > 0:
+        sections.append((line_number, ''.join(current)))
+        line_tooltip[line_number] = ''.join(current)
 
-    return result.stdout + result.stderr, parsed
+    pprint(sections)
+
+    return sections, line_tooltip
+    # return [(None, result.stdout)], line_tooltip
 
 
 def read_file(file: File):
