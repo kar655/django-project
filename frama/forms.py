@@ -21,12 +21,18 @@ class DirectoryForm(forms.ModelForm):
         exclude = ["timestamp", "is_valid", "user"]
 
     def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id')
         super(DirectoryForm, self).__init__(*args, **kwargs)
-        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True)
+        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True, user_id=user_id)
 
 
 class DirectoryDeleteForm(forms.Form):
-    directory = forms.ModelChoiceField(queryset=Directory.objects.filter(is_valid=True))
+    directory = forms.ModelChoiceField(queryset=Directory.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id')
+        super(DirectoryDeleteForm, self).__init__(*args, **kwargs)
+        self.fields['directory'].queryset = Directory.objects.filter(is_valid=True, user_id=user_id)
 
 
 class FileForm(forms.ModelForm):
@@ -36,12 +42,18 @@ class FileForm(forms.ModelForm):
         exclude = ["timestamp", "is_valid", "user"]
 
     def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id')
         super(FileForm, self).__init__(*args, **kwargs)
-        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True)
+        self.fields["parent_directory"].queryset = Directory.objects.filter(is_valid=True, user_id=user_id)
 
 
 class FileDeleteForm(forms.Form):
-    file = forms.ModelChoiceField(queryset=File.objects.filter(is_valid=True))
+    file = forms.ModelChoiceField(queryset=File.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id')
+        super(FileDeleteForm, self).__init__(*args, **kwargs)
+        self.fields['file'].queryset = File.objects.filter(is_valid=True, user_id=user_id)
 
 
 class FileSectionForm(forms.ModelForm):
@@ -51,8 +63,9 @@ class FileSectionForm(forms.ModelForm):
         exclude = ["timestamp", "is_valid", "user"]
 
     def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('user_id')
         super(FileSectionForm, self).__init__(*args, **kwargs)
-        self.fields["file_referred"].queryset = File.objects.filter(is_valid=True)
+        self.fields["file_referred"].queryset = File.objects.filter(is_valid=True, user_id=user_id)
 
 
 class TabProversForm(forms.Form):

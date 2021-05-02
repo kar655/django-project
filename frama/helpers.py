@@ -86,7 +86,3 @@ def read_file(file: File):
 
     file.file_field.close()
     return result
-
-
-def get_current_user(session) -> User:
-    return User.objects.get(pk=session["uname_id"])
