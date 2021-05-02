@@ -1,22 +1,16 @@
 from django.http import Http404
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth import views as auth_views
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
-from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file, get_result
+from .helpers import focus_on_program_elements_helper, get_current_user, read_file, get_result, \
+    init_root_directory
 from .models import File, Directory, FileSection
-
-
-def init(request):
-    # request.session["uname_id"] = 1
-    init_database()
-    return HttpResponse("Initialized")
 
 
 class LoginView(auth_views.LoginView):
@@ -35,8 +29,6 @@ class RegisterView(CreateView):
     template_name = "frama/login_form.html"
     form_class = RegisterForm
     success_url = reverse_lazy("login")
-
-    # todo adding root dir on create
 
 
 class MainView(TemplateView):
@@ -59,11 +51,11 @@ class MainView(TemplateView):
         self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
         self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
 
-    def load_custom_data(self, chosen_file):
-        self.root_directory = Directory.objects.get(pk="ROOT", is_valid=True)
+    def load_custom_data(self, chosen_file, user: User):
+        self.root_directory = Directory.objects.get(name="ROOT", user=user.id, is_valid=True)
 
         if chosen_file is not None:
-            self.file = get_object_or_404(File, pk=chosen_file, is_valid=True)
+            self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
             self.file_elements, self.line_tooltips = focus_on_program_elements_helper(self.file)
             self.file_content = read_file(self.file)
         else:
@@ -86,11 +78,12 @@ class MainView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         print(f"authenticated: {request.user.is_authenticated}")
+        init_root_directory(request.user)
         self.chosen_tab = kwargs.get('chosen_tab', None)
         self.check_chosen_tab()
         self.load_chosen_tab()
         chosen_file = kwargs.get('chosen_file', None)
-        self.load_custom_data(chosen_file)
+        self.load_custom_data(chosen_file, request.user)
 
         if self.is_result:
             self.chosen_tab = self.chosen_tab(
@@ -112,18 +105,12 @@ class MainView(TemplateView):
         self.load_chosen_tab()
         self.chosen_tab = self.chosen_tab(request.POST)
         chosen_file = kwargs.get('chosen_file', None)
-        self.load_custom_data(chosen_file)
+        self.load_custom_data(chosen_file, request.user)
 
         if self.chosen_tab.is_valid():
             self.chosen_tab.add_to_session(request.session)
 
         return super().get(request, *args, **kwargs)
-
-
-# class UserCreateView(CreateView):
-#     model = User
-#     form_class = UserForm
-#     success_url = reverse_lazy("main")
 
 
 class DirectoryCreateView(CreateView):

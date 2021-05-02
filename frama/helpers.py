@@ -5,12 +5,14 @@ from django.contrib.auth.models import User
 from .models import File, Directory, FileSection
 
 
-def init_database():
-    # user = User(login="login", name="name", password="password")
-    # user.save()
-    directory = Directory(name="ROOT", description="Root directory", user_id=1)
-    directory.save()
-    return
+def init_root_directory(user: User):
+    try:
+        root_directory = user.directory_set.get(name="ROOT", user=user)
+        root_directory.is_valid = True
+        root_directory.save()
+    except Directory.DoesNotExist:
+        root_directory = Directory(name="ROOT", description="Root directory", user=user)
+        root_directory.save()
 
 
 def get_result(command: str):
