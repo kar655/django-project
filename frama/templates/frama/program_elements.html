@@ -5,7 +5,8 @@
 {% load static %}
 <script src="{% static 'frama/js/hide_program_elements.js' %}"></script>
 {% for line_number, section in file_elements_sections %}
-<p id="file_elements_{{ forloop.counter0 }}" onclick='hide_program_elements(this, `{{ section }}`, "Instead")'>
+<p id="file_elements_{{ forloop.counter0 }}" onclick='hide_program_elements(this, `{{ section }}`,
+        {% if line_number %} "--- Line {{ line_number }} ---" {% else %} "--- Section ---" {% endif %})'>
 {{ section }}</p>
 {% endfor %}
 {% else %}
