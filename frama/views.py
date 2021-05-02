@@ -4,9 +4,11 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.models import User as DjangoUser
 
 from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
-    ChosenTab
+    ChosenTab, RegisterForm
 from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file, get_result
 from .models import File, User, Directory, FileSection
 
@@ -15,6 +17,24 @@ def init(request):
     request.session["uname_id"] = 1
     init_database()
     return HttpResponse("Initialized")
+
+
+class LoginView(auth_views.LoginView):
+    template_name = "frama/login_form.html"
+    success_url = reverse_lazy("main")
+    redirect_authenticated_user = True
+
+
+class LogoutView(auth_views.LogoutView):
+    template_name = "frama/logout_form.html"
+    success_url = reverse_lazy("login")
+
+
+class RegisterView(CreateView):
+    # model = DjangoUser
+    template_name = "frama/login_form.html"
+    form_class = RegisterForm
+    success_url = reverse_lazy("login")
 
 
 class MainView(TemplateView):
@@ -63,6 +83,7 @@ class MainView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
+        print(f"authenticated: {request.user.is_authenticated}")
         self.chosen_tab = kwargs.get('chosen_tab', None)
         self.check_chosen_tab()
         self.load_chosen_tab()

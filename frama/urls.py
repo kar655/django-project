@@ -4,6 +4,9 @@ from . import views
 
 urlpatterns = [
     path('init', views.init, name="init"),
+    path('login', views.LoginView.as_view(), name="login"),
+    path('logout', views.LogoutView.as_view(), name="logout"),
+    path('register', views.RegisterView.as_view(), name="register"),
     path('main', views.MainView.as_view(), name="main"),
     path('main/<str:chosen_tab>/<str:chosen_file>', views.MainView.as_view(), name="main-tab-file"),
     path('file/add', views.FileCreateView.as_view(), name="file-add"),
