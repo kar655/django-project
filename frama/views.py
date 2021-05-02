@@ -13,6 +13,30 @@ from .helpers import focus_on_program_elements_helper, read_file, get_result, \
 from .models import File, Directory, FileSection
 
 
+class UserCreateView(CreateView):
+    class Meta:
+        abstract = True
+
+    def get_form_kwargs(self):
+        kwargs = super(UserCreateView, self).get_form_kwargs()
+        kwargs.update({'user_id': self.request.user.id})
+        return kwargs
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super(UserCreateView, self).form_valid(form)
+
+
+class UserFormView(FormView):
+    class Meta:
+        abstract = True
+
+    def get_form_kwargs(self):
+        kwargs = super(UserFormView, self).get_form_kwargs()
+        kwargs.update({'user_id': self.request.user.id})
+        return kwargs
+
+
 class LoginView(auth_views.LoginView):
     template_name = "frama/login_form.html"
     success_url = reverse_lazy("main")
@@ -112,30 +136,16 @@ class MainView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class DirectoryCreateView(CreateView):
+class DirectoryCreateView(UserCreateView):
     model = Directory
     form_class = DirectoryForm
     success_url = reverse_lazy("main")
 
-    def get_form_kwargs(self):
-        kwargs = super(DirectoryCreateView, self).get_form_kwargs()
-        kwargs.update({'user_id': self.request.user.id})
-        return kwargs
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super(DirectoryCreateView, self).form_valid(form)
-
-
-class DirectoryDeleteView(FormView):
+class DirectoryDeleteView(UserFormView):
     template_name = "frama/directory_form.html"
     form_class = DirectoryDeleteForm
     success_url = reverse_lazy("main")
-
-    def get_form_kwargs(self):
-        kwargs = super(DirectoryDeleteView, self).get_form_kwargs()
-        kwargs.update({'user_id': self.request.user.id})
-        return kwargs
 
     def form_valid(self, form):
         directory = form.cleaned_data['directory']
@@ -156,30 +166,16 @@ class DirectoryDeleteView(FormView):
         return super(DirectoryDeleteView, self).form_valid(form)
 
 
-class FileCreateView(CreateView):
+class FileCreateView(UserCreateView):
     model = File
     form_class = FileForm
     success_url = reverse_lazy("main")
 
-    def get_form_kwargs(self):
-        kwargs = super(FileCreateView, self).get_form_kwargs()
-        kwargs.update({'user_id': self.request.user.id})
-        return kwargs
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super(FileCreateView, self).form_valid(form)
-
-
-class FileDeleteView(FormView):
+class FileDeleteView(UserFormView):
     template_name = "frama/file_form.html"
     form_class = FileDeleteForm
     success_url = reverse_lazy("main")
-
-    def get_form_kwargs(self):
-        kwargs = super(FileDeleteView, self).get_form_kwargs()
-        kwargs.update({'user_id': self.request.user.id})
-        return kwargs
 
     def form_valid(self, form):
         file = form.cleaned_data['file']
@@ -188,16 +184,7 @@ class FileDeleteView(FormView):
         return super(FileDeleteView, self).form_valid(form)
 
 
-class FileSectionCreateView(CreateView):
+class FileSectionCreateView(UserCreateView):
     model = FileSection
     form_class = FileSectionForm
     success_url = reverse_lazy("main")
-
-    def get_form_kwargs(self):
-        kwargs = super(FileSectionCreateView, self).get_form_kwargs()
-        kwargs.update({'user_id': self.request.user.id})
-        return kwargs
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super(FileSectionCreateView, self).form_valid(form)
