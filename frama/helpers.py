@@ -1,12 +1,13 @@
 import re
 import subprocess
+from django.contrib.auth.models import User
 
-from .models import File, User, Directory, FileSection
+from .models import File, Directory, FileSection
 
 
 def init_database():
-    user = User(login="login", name="name", password="password")
-    user.save()
+    # user = User(login="login", name="name", password="password")
+    # user.save()
     directory = Directory(name="ROOT", description="Root directory", user_id=1)
     directory.save()
     return

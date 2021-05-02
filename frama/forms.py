@@ -1,26 +1,17 @@
 from django import forms
 from enum import Enum, unique
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User as DjangoUser
+from django.contrib.auth.models import User
 
-from .models import User, File, Directory, FileSection
+from .models import File, Directory, FileSection
 
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
 
     class Meta:
-        model = DjangoUser
-        fields = ["username", "email", "password1", "password2"]
-
-
-class UserForm(forms.ModelForm):
-    class Meta:
         model = User
-        fields = "__all__"
-        widgets = {
-            "password": forms.PasswordInput()
-        }
+        fields = ["username", "email", "password1", "password2"]
 
 
 class DirectoryForm(forms.ModelForm):

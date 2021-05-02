@@ -1,14 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy
-
-
-class User(models.Model):
-    login = models.CharField(max_length=30, unique=True)
-    name = models.CharField(max_length=30)
-    password = models.CharField(max_length=50, help_text="Stored each password as an encrypted text")
-
-    def __str__(self):
-        return self.login
 
 
 class BasicInformation(models.Model):

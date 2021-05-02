@@ -5,16 +5,16 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth import views as auth_views
-from django.contrib.auth.models import User as DjangoUser
+# from django.contrib.auth.models import User
 
-from .forms import FileForm, UserForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
+from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
 from .helpers import focus_on_program_elements_helper, get_current_user, init_database, read_file, get_result
-from .models import File, User, Directory, FileSection
+from .models import File, Directory, FileSection
 
 
 def init(request):
-    request.session["uname_id"] = 1
+    # request.session["uname_id"] = 1
     init_database()
     return HttpResponse("Initialized")
 
@@ -35,6 +35,8 @@ class RegisterView(CreateView):
     template_name = "frama/login_form.html"
     form_class = RegisterForm
     success_url = reverse_lazy("login")
+
+    # todo adding root dir on create
 
 
 class MainView(TemplateView):
@@ -118,10 +120,10 @@ class MainView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-class UserCreateView(CreateView):
-    model = User
-    form_class = UserForm
-    success_url = reverse_lazy("main")
+# class UserCreateView(CreateView):
+#     model = User
+#     form_class = UserForm
+#     success_url = reverse_lazy("main")
 
 
 class DirectoryCreateView(CreateView):
