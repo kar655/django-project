@@ -31,6 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/frama/login'
 LOGIN_REDIRECT_URL = '/frama/main'
 
 # Application definition

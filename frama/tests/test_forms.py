@@ -245,7 +245,7 @@ class TabProversFormTest(TestCase):
         form.add_to_session(session)
         session.save()
 
-        self.assertTrue("provers" in self.client.session)
+        self.assertIn("provers", self.client.session)
         self.assertEqual(session["provers"], self.form_data["provers"])
 
 
@@ -272,7 +272,7 @@ class TabVCsFormTest(TestCase):
         form.add_to_session(session)
         session.save()
 
-        self.assertTrue("use_wp_rte" in self.client.session)
+        self.assertIn("use_wp_rte", self.client.session)
         self.assertEqual(session["use_wp_rte"], self.form_data["use_wp_rte"])
-        self.assertTrue("wp_prop_flag" in self.client.session)
+        self.assertIn("wp_prop_flag", self.client.session)
         self.assertEqual(session["wp_prop_flag"], self.form_data["wp_prop_flag"])
