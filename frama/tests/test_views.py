@@ -134,14 +134,6 @@ class DirectoryDeleteViewTest(GenerateFileStructureTests):
         self.assertFalse(Directory.objects.get(pk=self.child_directory.pk).is_valid)
         self.assertFalse(File.objects.get(pk=self.child_directory_file.pk).is_valid)
 
-    def test_get(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
-    def test_post(self):
-        response = self.client.post(self.url)
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-
 
 class FileDeleteViewTest(GenerateFileStructureTests):
 
@@ -176,7 +168,6 @@ class MainViewTest(GenerateFileStructureTests):
 
     def setUp(self):
         super(MainViewTest, self).setUp()
-        # self.url = reverse("main")
 
     def test_no_file_chosen(self):
         url = reverse("main")
