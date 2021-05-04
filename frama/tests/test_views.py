@@ -10,22 +10,6 @@ from frama.views import LogoutView, MainView, FileCreateView, FileDeleteView, Di
     FileSectionCreateView
 
 
-# class TestViewWithUser(TestCase):
-#
-#     def setUp(self):
-#         self.user = User.objects.create(username="user", password="password")
-#         self.factory = RequestFactory()
-#         self.middleware = SessionMiddleware()
-#
-#     def generate_request(self, url, get=True, data=None):
-#         request = self.factory.get(url, data=data) if get else self.factory.post(url, data=data)
-#         self.middleware.process_request(request)
-#         request.session.save()
-#         request.user = self.user
-#
-#         return request
-
-
 class GenerateFileStructureTests(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="user", password="password")
@@ -82,10 +66,38 @@ class RequiresLoginViewsTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
 
-class MainViewTest(TestCase):
+class AllViewsGetPostTest(TestCase):
 
     def setUp(self):
         self.user = User.objects.create(username="user", password="password")
+        self.client.force_login(self.user)
+
+    @parameterized.expand([
+        ["logout", reverse("logout")],
+        ["register", reverse("register")],
+        ["main", reverse("main")],
+        ["file-add", reverse("file-add")],
+        ["file-delete", reverse("file-delete")],
+        ["directory-add", reverse("directory-add")],
+        ["directory-delete", reverse("directory-delete")],
+        ["file-section-add", reverse("file-section-add")],
+    ])
+    def test_get(self, name, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    @parameterized.expand([
+        ["logout", reverse("logout")],
+        ["register", reverse("register")],
+        ["file-add", reverse("file-add")],
+        ["file-delete", reverse("file-delete")],
+        ["directory-add", reverse("directory-add")],
+        ["directory-delete", reverse("directory-delete")],
+        ["file-section-add", reverse("file-section-add")],
+    ])
+    def test_post(self, name, url):
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
 
 class DirectoryDeleteViewTest(GenerateFileStructureTests):
@@ -130,29 +142,6 @@ class DirectoryDeleteViewTest(GenerateFileStructureTests):
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_test(self):
-        # request = self.generate_request(self.url)
-        # response = DirectoryDeleteView.as_view()(request)
-        # print(response)
-        #
-        # self.form_data["directory"] = self.child_directory
-        # self.form_data["directory"] = "nonsense"
-        # request = self.generate_request(self.url, get=False, data=self.form_data)
-        # response = DirectoryDeleteView.as_view()(request)
-        # print(response)
-
-        # print(self.client.login(username=self.user.username, password="password"))
-        #
-        # self.client.force_login(self.user)
-        # response = self.client.post(self.url, data=self.form_data)
-        # print(response)
-        # print(response.context['form'].is_valid())
-        # print(response.templates[0].name)
-        # print(self.child_directory.is_valid)
-
-        # self.client.force_login(self.user)
-        pass
-
 
 class FileDeleteViewTest(GenerateFileStructureTests):
 
@@ -181,3 +170,33 @@ class FileDeleteViewTest(GenerateFileStructureTests):
 
     def test_delete_root_file(self):
         self.generic_delete_files(self.root_directory_file)
+
+
+class MainViewTest(GenerateFileStructureTests):
+
+    def setUp(self):
+        super(MainViewTest, self).setUp()
+        # self.url = reverse("main")
+
+    def test_no_file_chosen(self):
+        url = reverse("main")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertContains(response, "Please choose a file", html=True)
+
+        # Test get_context_data
+        self.assertIsNotNone(response.context['recursive_structure'])
+        self.assertIsNone(response.context['chosen_file'])
+        self.assertIsNone(response.context['file_elements_sections'])
+        self.assertIsNone(response.context['line_tooltips'])
+        self.assertIsNone(response.context['file_content'])
+        self.assertIsNotNone(response.context['chosen_tab'])
+        self.assertIsNotNone(response.context['is_result'])
+
+        # Test used templates
+        self.assertTemplateUsed(response, "frama/index.html")
+        self.assertTemplateUsed(response, "frama/directory_tree_recursive.html")
+        self.assertTemplateUsed(response, "frama/file_content.html")
+        self.assertTemplateUsed(response, "frama/program_elements.html")
+        self.assertTemplateUsed(response, "frama/tab_data.html")

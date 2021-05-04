@@ -121,18 +121,18 @@ class MainView(TemplateView):
 
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        self.chosen_tab = kwargs.get('chosen_tab', None)
-        self.check_chosen_tab()
-        self.load_chosen_tab()
-        self.chosen_tab = self.chosen_tab(request.POST)
-        chosen_file = kwargs.get('chosen_file', None)
-        self.load_custom_data(chosen_file, request.user)
-
-        if self.chosen_tab.is_valid():
-            self.chosen_tab.add_to_session(request.session)
-
-        return super().get(request, *args, **kwargs)
+    # def post(self, request, *args, **kwargs):
+    #     self.chosen_tab = kwargs.get('chosen_tab', None)
+    #     self.check_chosen_tab()
+    #     self.load_chosen_tab()
+    #     self.chosen_tab = self.chosen_tab(request.POST)
+    #     chosen_file = kwargs.get('chosen_file', None)
+    #     self.load_custom_data(chosen_file, request.user)
+    #
+    #     if self.chosen_tab.is_valid():
+    #         self.chosen_tab.add_to_session(request.session)
+    #
+    #     return super().get(request, *args, **kwargs)
 
 
 class DirectoryCreateView(UserCreateView):
