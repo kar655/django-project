@@ -10,6 +10,22 @@ from frama.views import LogoutView, MainView, FileCreateView, FileDeleteView, Di
     FileSectionCreateView
 
 
+# class TestViewWithUser(TestCase):
+#
+#     def setUp(self):
+#         self.user = User.objects.create(username="user", password="password")
+#         self.factory = RequestFactory()
+#         self.middleware = SessionMiddleware()
+#
+#     def generate_request(self, url, get=True, data=None):
+#         request = self.factory.get(url, data=data) if get else self.factory.post(url, data=data)
+#         self.middleware.process_request(request)
+#         request.session.save()
+#         request.user = self.user
+#
+#         return request
+
+
 class RequiresLoginViewsTests(TestCase):
 
     def setUp(self):
@@ -17,8 +33,8 @@ class RequiresLoginViewsTests(TestCase):
         self.factory = RequestFactory()
         self.middleware = SessionMiddleware()
 
-    def generate_request(self, url):
-        request = self.factory.get(url)
+    def generate_request(self, url, post=False):
+        request = self.factory.post(url) if post else self.factory.get(url)
         self.middleware.process_request(request)
         request.session.save()
         return request
@@ -61,8 +77,8 @@ class MainViewTest(TestCase):
 class DirectoryDeleteViewTest(TestCase):
 
     def setUp(self):
-        self.factory = RequestFactory()
         self.user = User.objects.create(username="user", password="password")
+        self.url = reverse("directory-delete")
         self.root_directory = Directory.objects.create(name="Root directory", user=self.user)
         self.root_directory_file = File.objects.create(name="First file",
                                                        parent_directory=self.root_directory, user=self.user)
@@ -74,32 +90,60 @@ class DirectoryDeleteViewTest(TestCase):
             "directory": None,
         }
 
+        self.client.force_login(self.user)
+
     def make_form(self):
-        self.form = DirectoryDeleteView.form_class(self.form_data)
+        self.form = DirectoryDeleteView.form_class(self.form_data, user_id=self.user.id)
 
     def test_delete_child_directory(self):
-        #         # Create an instance of a GET request.
-        #         request = self.factory.get('/customer/details')
-        #
-        #         # Recall that middleware are not supported. You can simulate a
-        #         # logged-in user by setting request.user manually.
-        #         request.user = self.user
-        #
-        #         # Or you can simulate an anonymous user by setting request.user to
-        #         # an AnonymousUser instance.
-        #         request.user = AnonymousUser()
-        #
-        #         # Test my_view() as if it were deployed at /customer/details
-        #         response = my_view(request)
-        #         # Use this syntax for class-based views.
-        #         response = MyView.as_view()(request)
-        #         self.assertEqual(response.status_code, 200)
-        # self.form_data["directory"] = self.child_directory
-        #
-        # request = self.factory.get(reverse("directory-delete"))
-        # # request.user = self.user
-        #
+        self.form_data["directory"] = self.child_directory
+        self.make_form()
+        self.assertTrue(self.form.is_valid())
+
+        DirectoryDeleteView().form_valid(self.form)
+
+        self.assertFalse(Directory.objects.get(pk=self.child_directory.pk).is_valid)
+        self.assertFalse(File.objects.get(pk=self.child_directory_file.pk).is_valid)
+
+    def test_delete_root_directory(self):
+        self.form_data["directory"] = self.root_directory
+        self.make_form()
+        self.assertTrue(self.form.is_valid())
+
+        DirectoryDeleteView().form_valid(self.form)
+
+        self.assertFalse(Directory.objects.get(pk=self.root_directory.pk).is_valid)
+        self.assertFalse(File.objects.get(pk=self.root_directory_file.pk).is_valid)
+        self.assertFalse(Directory.objects.get(pk=self.child_directory.pk).is_valid)
+        self.assertFalse(File.objects.get(pk=self.child_directory_file.pk).is_valid)
+
+    def test_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_post(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_test(self):
+        # request = self.generate_request(self.url)
         # response = DirectoryDeleteView.as_view()(request)
         # print(response)
-        # self.assertEqual(response.status_code, HTTPStatus.OK)
+        #
+        # self.form_data["directory"] = self.child_directory
+        # self.form_data["directory"] = "nonsense"
+        # request = self.generate_request(self.url, get=False, data=self.form_data)
+        # response = DirectoryDeleteView.as_view()(request)
+        # print(response)
+
+        # print(self.client.login(username=self.user.username, password="password"))
+        #
+        # self.client.force_login(self.user)
+        # response = self.client.post(self.url, data=self.form_data)
+        # print(response)
+        # print(response.context['form'].is_valid())
+        # print(response.templates[0].name)
+        # print(self.child_directory.is_valid)
+
+        # self.client.force_login(self.user)
         pass

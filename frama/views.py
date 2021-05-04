@@ -100,7 +100,6 @@ class MainView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        print(f"authenticated: {request.user.is_authenticated}")
         init_root_directory(request.user)
         self.chosen_tab = kwargs.get('chosen_tab', None)
         self.check_chosen_tab()
