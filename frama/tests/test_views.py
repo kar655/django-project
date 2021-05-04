@@ -26,6 +26,20 @@ from frama.views import LogoutView, MainView, FileCreateView, FileDeleteView, Di
 #         return request
 
 
+class GenerateFileStructureTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="user", password="password")
+        self.client.force_login(self.user)
+
+        self.root_directory = Directory.objects.create(name="Root directory", user=self.user)
+        self.root_directory_file = File.objects.create(name="First file",
+                                                       parent_directory=self.root_directory, user=self.user)
+        self.child_directory = Directory.objects.create(name="Child directory",
+                                                        parent_directory=self.root_directory, user=self.user)
+        self.child_directory_file = File.objects.create(name="Second file",
+                                                        parent_directory=self.child_directory, user=self.user)
+
+
 class RequiresLoginViewsTests(TestCase):
 
     def setUp(self):
@@ -74,43 +88,34 @@ class MainViewTest(TestCase):
         self.user = User.objects.create(username="user", password="password")
 
 
-class DirectoryDeleteViewTest(TestCase):
+class DirectoryDeleteViewTest(GenerateFileStructureTests):
 
     def setUp(self):
-        self.user = User.objects.create(username="user", password="password")
+        super(DirectoryDeleteViewTest, self).setUp()
         self.url = reverse("directory-delete")
-        self.root_directory = Directory.objects.create(name="Root directory", user=self.user)
-        self.root_directory_file = File.objects.create(name="First file",
-                                                       parent_directory=self.root_directory, user=self.user)
-        self.child_directory = Directory.objects.create(name="Child directory",
-                                                        parent_directory=self.root_directory, user=self.user)
-        self.child_directory_file = File.objects.create(name="Second file",
-                                                        parent_directory=self.child_directory, user=self.user)
+
         self.form_data = {
             "directory": None,
         }
 
-        self.client.force_login(self.user)
-
     def make_form(self):
         self.form = DirectoryDeleteView.form_class(self.form_data, user_id=self.user.id)
 
-    def test_delete_child_directory(self):
-        self.form_data["directory"] = self.child_directory
+    def generic_delete_directory(self, directory):
+        self.form_data["directory"] = directory
         self.make_form()
         self.assertTrue(self.form.is_valid())
 
         DirectoryDeleteView().form_valid(self.form)
+
+    def test_delete_child_directory(self):
+        self.generic_delete_directory(self.child_directory)
 
         self.assertFalse(Directory.objects.get(pk=self.child_directory.pk).is_valid)
         self.assertFalse(File.objects.get(pk=self.child_directory_file.pk).is_valid)
 
     def test_delete_root_directory(self):
-        self.form_data["directory"] = self.root_directory
-        self.make_form()
-        self.assertTrue(self.form.is_valid())
-
-        DirectoryDeleteView().form_valid(self.form)
+        self.generic_delete_directory(self.root_directory)
 
         self.assertFalse(Directory.objects.get(pk=self.root_directory.pk).is_valid)
         self.assertFalse(File.objects.get(pk=self.root_directory_file.pk).is_valid)
@@ -147,3 +152,32 @@ class DirectoryDeleteViewTest(TestCase):
 
         # self.client.force_login(self.user)
         pass
+
+
+class FileDeleteViewTest(GenerateFileStructureTests):
+
+    def setUp(self):
+        super(FileDeleteViewTest, self).setUp()
+        self.url = reverse("file-delete")
+
+        self.form_data = {
+            "file": None,
+        }
+
+    def make_form(self):
+        self.form = FileDeleteView.form_class(self.form_data, user_id=self.user.id)
+
+    def generic_delete_files(self, file):
+        self.form_data["file"] = file
+        self.make_form()
+        self.assertTrue(self.form.is_valid())
+
+        FileDeleteView().form_valid(self.form)
+
+        self.assertFalse(File.objects.get(pk=file.pk).is_valid)
+
+    def test_delete_child_file(self):
+        self.generic_delete_files(self.child_directory_file)
+
+    def test_delete_root_file(self):
+        self.generic_delete_files(self.root_directory_file)
