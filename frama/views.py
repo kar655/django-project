@@ -1,16 +1,22 @@
-from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import User
+from random import randint
 
 from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
 from .helpers import focus_on_program_elements_helper, read_file, get_result, \
     init_root_directory
 from .models import File, Directory, FileSection
+
+
+def random_view(request):
+    # return HttpResponse(f"Random int = {randint(0, 1000)}")
+    return render(request, "frama/test.html")
 
 
 class UserCreateView(CreateView):
@@ -52,6 +58,59 @@ class RegisterView(CreateView):
     template_name = "frama/login_form.html"
     form_class = RegisterForm
     success_url = reverse_lazy("login")
+
+
+class TabsView(TemplateView):
+    template_name = "frama/tab_data.html"
+
+    # chosen_file
+    # chosen_tab
+    file = None
+    chosen_tab = None
+    is_result = None
+    chosen_tab_name = None
+
+    def check_chosen_tab(self):
+        if self.chosen_tab is not None and not ChosenTab.has_value(self.chosen_tab):
+            raise Http404(f"No tab matches value {self.chosen_tab}")
+
+    def load_chosen_tab(self):
+        self.chosen_tab_name = self.chosen_tab
+        self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
+        self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['chosen_file'] = self.file
+        context['chosen_tab'] = self.chosen_tab
+        context['is_result'] = self.is_result
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        print("In Get XD")
+        print(request.GET)
+        # self.chosen_tab = kwargs.get('chosen_tab', None)
+        self.chosen_tab = request.GET.get("chosen_tab")
+        self.check_chosen_tab()
+        self.load_chosen_tab()
+        # chosen_file = kwargs.get('chosen_file', None)
+        chosen_file = request.GET.get("chosen_file")
+        print(f"chosen_tab = {self.chosen_tab}   chosen_file = {chosen_file}")
+
+        if self.is_result:
+            self.chosen_tab = self.chosen_tab(
+                provers=request.session.get('provers', None),
+                use_wp_rte=request.session.get('use_wp_rte', None),
+                wp_prop_flag=request.session.get('wp_prop_flag', None),
+                file_path=self.file.file_field.path if self.file is not None else "no file",
+            )
+            used_command = f"Results of: {self.chosen_tab}\n\n\n"
+            self.chosen_tab = used_command + get_result(self.chosen_tab)
+        else:
+            self.chosen_tab = self.chosen_tab()
+
+        return super().get(request, *args, **kwargs)
 
 
 class MainView(TemplateView):
