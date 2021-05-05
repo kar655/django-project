@@ -63,12 +63,11 @@ class RegisterView(CreateView):
 class TabsView(TemplateView):
     template_name = "frama/tab_data.html"
 
-    # chosen_file
-    # chosen_tab
-    file = None
+    is_chosen_file = True
     chosen_tab = None
     is_result = None
     chosen_tab_name = None
+    file = None
 
     def check_chosen_tab(self):
         if self.chosen_tab is not None and not ChosenTab.has_value(self.chosen_tab):
@@ -84,30 +83,34 @@ class TabsView(TemplateView):
         context['chosen_file'] = self.file
         context['chosen_tab'] = self.chosen_tab
         context['is_result'] = self.is_result
+        context['is_chosen_file'] = self.is_chosen_file
 
         return context
 
     def get(self, request, *args, **kwargs):
-        print("In Get XD")
+        print(f"is authenticated = {request.session}")
         print(request.GET)
-        # self.chosen_tab = kwargs.get('chosen_tab', None)
         self.chosen_tab = request.GET.get("chosen_tab")
         self.check_chosen_tab()
         self.load_chosen_tab()
+
         # chosen_file = kwargs.get('chosen_file', None)
-        chosen_file = request.GET.get("chosen_file")
-        print(f"chosen_tab = {self.chosen_tab}   chosen_file = {chosen_file}")
+        self.file = request.GET.get("chosen_file")
+        print(f"chosen_tab = {self.chosen_tab}   chosen_file = {self.file}")
 
         if self.is_result:
+            print("is result")
             self.chosen_tab = self.chosen_tab(
                 provers=request.session.get('provers', None),
                 use_wp_rte=request.session.get('use_wp_rte', None),
                 wp_prop_flag=request.session.get('wp_prop_flag', None),
-                file_path=self.file.file_field.path if self.file is not None else "no file",
+                # file_path=self.file.file_field.path if self.file is not None else "no file",
+                file_path=self.file if self.file is not None else "no file",
             )
             used_command = f"Results of: {self.chosen_tab}\n\n\n"
             self.chosen_tab = used_command + get_result(self.chosen_tab)
         else:
+            print("is not result")
             self.chosen_tab = self.chosen_tab()
 
         return super().get(request, *args, **kwargs)
@@ -155,6 +158,7 @@ class MainView(TemplateView):
         context['file_content'] = self.file_content
         context['chosen_tab'] = self.chosen_tab
         context['is_result'] = self.is_result
+        context['chosen_file_path'] = self.file.file_field.path
 
         return context
 

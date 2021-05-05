@@ -18,6 +18,7 @@
     </div>
     <div class="flex-grid">
         <div class="col" id="files">
+            <p id="random">Random Here</p>
             <h3>File Selection dialog</h3>
             <ul>
                 {% include "frama/directory_tree_recursive.html" %}
@@ -36,16 +37,29 @@
             </div>
             <div id="tabs">
                 <div class="topnav">
-                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'provers' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">PROVERS</a>
-                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'vcs' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">VCs</a>
-                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'result' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">RESULT</a>
+{#                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'provers' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">PROVERS</a>#}
+{#                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'vcs' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">VCs</a>#}
+{#                    <a href="{% if chosen_file %}{% url 'main-tab-file' 'result' chosen_file.name %}{% else %}{% url 'main' %}{% endif %}">RESULT</a>#}
+                    <a id="tab-provers" onclick="tab_clicked('provers', `{{ chosen_file_path }}`)" >PROVERS</a>
+                    <a id="tab-vcs" onclick="tab_clicked('vcs', `{{ chosen_file_path }}`)" >VCs</a>
+                    <a id="tab-result" onclick="tab_clicked('result', `{{ chosen_file_path }}`)" >RESULT</a>
                 </div>
                 <div id="tabs-data">
-                    {% include "frama/tab_data.html" %}
+{#                    {% include "frama/tab_data.html" %}#}
                 </div>
             </div>
         </div>
     </div>
 </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+{#    <link rel="stylesheet" href="{% static 'frama/js/reload_tabs.js' %}">#}
+    <script src="{% static 'frama/js/reload_tabs.js' %}"></script>
+{#    {% block javascript %}#}
+{#        $("#random").click(function (e) {#}
+{#            e.preventDefault()#}
+{#            console.log("In CLick")#}
+{#        })#}
+{#    {% endblock javascript %}#}
 </body>
 </html>
