@@ -1,5 +1,5 @@
 from django.http import Http404, HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
@@ -158,7 +158,7 @@ class MainView(TemplateView):
         context['file_content'] = self.file_content
         context['chosen_tab'] = self.chosen_tab
         context['is_result'] = self.is_result
-        context['chosen_file_path'] = self.file.file_field.path
+        context['chosen_file_path'] = self.file.file_field.path if self.file else None
 
         return context
 
@@ -184,8 +184,30 @@ class MainView(TemplateView):
 
         return super().get(request, *args, **kwargs)
 
-    # def post(self, request, *args, **kwargs):
-    #     self.chosen_tab = kwargs.get('chosen_tab', None)
+    def post(self, request, *args, **kwargs):
+        print("POST")
+        print(request.POST)
+        print(f"got=={request.POST.get('use_wp_rte', None)}")
+        print(f"got2=={request.POST.get('wp_prop_flag', None)}")
+        # print(f"got3=={request.POST.get('alt-ergo', None)}")
+        # print(f"got4=={request.POST.get('z3', None)}")
+        # print(f"got5=={request.POST.get('cvc4', None)}")
+        print(f"got6=={request.POST.get('provers', None)}")
+        use_wp_rte = request.POST.get('use_wp_rte', None)
+        wp_prop_flag = request.POST.get('wp_prop_flag', None)
+        # alt_ergo = request.POST.get('alt-ergo', None)
+        # z3 = request.POST.get('z3', None)
+        # cvc4 = request.POST.get('cvc4', None)
+        provers = request.POST.get('provers', None)
+
+        if provers is None:
+            request.session['use_wp_rte'] = use_wp_rte
+            request.session['wp_prop_flag'] = wp_prop_flag
+        else:
+            request.session['provers'] = provers
+
+        # self.chosen_tab = kwargs.get('chosen_tab', None)
+        # print(f"chosen_tab={self.chosen_tab}")
     #     self.check_chosen_tab()
     #     self.load_chosen_tab()
     #     self.chosen_tab = self.chosen_tab(request.POST)
@@ -195,7 +217,9 @@ class MainView(TemplateView):
     #     if self.chosen_tab.is_valid():
     #         self.chosen_tab.add_to_session(request.session)
     #
-    #     return super().get(request, *args, **kwargs)
+        # return super().get(request, *args, **kwargs)
+        print("LEAVING")
+        return redirect('main')
 
 
 class DirectoryCreateView(UserCreateView):
