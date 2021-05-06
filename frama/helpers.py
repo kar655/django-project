@@ -56,7 +56,7 @@ def focus_on_program_elements_helper(file: File):
         sections.append((line_number, ''.join(current)))
         line_tooltip[line_number] = ''.join(current)
 
-    pprint(sections)
+    # pprint(sections)
 
     return sections, line_tooltip
     # return [(None, result.stdout)], line_tooltip

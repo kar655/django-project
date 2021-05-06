@@ -60,6 +60,38 @@ class RegisterView(CreateView):
     success_url = reverse_lazy("login")
 
 
+class ProgramElements(TemplateView):
+    template_name = "frama/program_elements.html"
+
+    file = None
+    file_elements_sections = None
+
+    def load_custom_data(self, chosen_file, user: User):
+        if chosen_file is not None:
+            self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
+            self.file_elements_sections, _ = focus_on_program_elements_helper(self.file)
+        else:
+            self.file = None
+            self.file_elements_sections = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['chosen_file'] = self.file
+        context['file_elements_sections'] = self.file_elements_sections
+        context['chosen_file_path'] = self.file.file_field.path if self.file else None
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            raise Http404()
+
+        chosen_file = request.GET.get('chosen_file', None)
+        self.load_custom_data(chosen_file, request.user)
+
+        return super().get(request, *args, **kwargs)
+
+
 class TabsView(TemplateView):
     template_name = "frama/tab_data.html"
 

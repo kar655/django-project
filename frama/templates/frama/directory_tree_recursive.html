@@ -9,7 +9,7 @@
                     {% for file in entry.file_set.all %}
                         {% if file.is_valid %}
                         <li>
-                            <a href="{% url 'main-tab-file' 'result' file.name %}" {% if chosen_file == file %}style="color: red" {% endif %}>{{ file }}</a>
+                            <a onclick="change_file(`{{ file.name }}`)" style="color: {% if chosen_file == file %}red{% else %}blue{% endif %}">{{ file }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
