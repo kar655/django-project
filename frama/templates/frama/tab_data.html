@@ -1,7 +1,5 @@
-{#<p id="random">Click Here to change idk what</p>#}
 <div id="tabs">
 {% spaceless %}
-{#{% if chosen_file %}#}
 {% if is_chosen_file %}
 {% if is_result %}
 <pre>{{ chosen_tab }}</pre>
@@ -17,8 +15,3 @@
 {% endif %}
 {% endspaceless %}
 </div>
-
-{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>#}
-{##}
-{#{% load static %}#}
-{#<script src="{% static 'frama/js/reload_tabs.js' %}"></script>#}

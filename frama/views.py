@@ -66,7 +66,6 @@ class TabsView(TemplateView):
     is_chosen_file = True
     chosen_tab = None
     is_result = None
-    chosen_tab_name = None
     file = None
 
     def check_chosen_tab(self):
@@ -74,8 +73,7 @@ class TabsView(TemplateView):
             raise Http404(f"No tab matches value {self.chosen_tab}")
 
     def load_chosen_tab(self):
-        self.chosen_tab_name = self.chosen_tab
-        self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
+        self.is_result = self.chosen_tab is None or self.chosen_tab == ChosenTab.RESULT
         self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
 
     def get_context_data(self, **kwargs):
@@ -88,29 +86,25 @@ class TabsView(TemplateView):
         return context
 
     def get(self, request, *args, **kwargs):
-        print(f"is authenticated = {request.session}")
-        print(request.GET)
+        if not request.is_ajax():
+            raise Http404()
+
         self.chosen_tab = request.GET.get("chosen_tab")
         self.check_chosen_tab()
         self.load_chosen_tab()
 
-        # chosen_file = kwargs.get('chosen_file', None)
         self.file = request.GET.get("chosen_file")
-        print(f"chosen_tab = {self.chosen_tab}   chosen_file = {self.file}")
 
         if self.is_result:
-            print("is result")
             self.chosen_tab = self.chosen_tab(
                 provers=request.session.get('provers', None),
                 use_wp_rte=request.session.get('use_wp_rte', None),
                 wp_prop_flag=request.session.get('wp_prop_flag', None),
-                # file_path=self.file.file_field.path if self.file is not None else "no file",
                 file_path=self.file if self.file is not None else "no file",
             )
             used_command = f"Results of: {self.chosen_tab}\n\n\n"
             self.chosen_tab = used_command + get_result(self.chosen_tab)
         else:
-            print("is not result")
             self.chosen_tab = self.chosen_tab()
 
         return super().get(request, *args, **kwargs)
@@ -118,23 +112,12 @@ class TabsView(TemplateView):
 
 class MainView(TemplateView):
     template_name = "frama/index.html"
+
     file = None
     file_elements_sections = None
     line_tooltips = None
     file_content = None
-    chosen_tab = None
-    chosen_tab_name = None
     root_directory = None
-    is_result = False
-
-    def check_chosen_tab(self):
-        if self.chosen_tab is not None and not ChosenTab.has_value(self.chosen_tab):
-            raise Http404(f"No tab matches value {self.chosen_tab}")
-
-    def load_chosen_tab(self):
-        self.chosen_tab_name = self.chosen_tab
-        self.is_result = self.chosen_tab_name is None or self.chosen_tab_name == ChosenTab.RESULT
-        self.chosen_tab = ChosenTab.give_form(self.chosen_tab)
 
     def load_custom_data(self, chosen_file, user: User):
         self.root_directory = Directory.objects.get(name="ROOT", user=user.id, is_valid=True)
@@ -156,48 +139,20 @@ class MainView(TemplateView):
         context['file_elements_sections'] = self.file_elements_sections
         context['line_tooltips'] = self.line_tooltips
         context['file_content'] = self.file_content
-        context['chosen_tab'] = self.chosen_tab
-        context['is_result'] = self.is_result
         context['chosen_file_path'] = self.file.file_field.path if self.file else None
 
         return context
 
     def get(self, request, *args, **kwargs):
         init_root_directory(request.user)
-        self.chosen_tab = kwargs.get('chosen_tab', None)
-        self.check_chosen_tab()
-        self.load_chosen_tab()
         chosen_file = kwargs.get('chosen_file', None)
         self.load_custom_data(chosen_file, request.user)
-
-        if self.is_result:
-            self.chosen_tab = self.chosen_tab(
-                provers=request.session.get('provers', None),
-                use_wp_rte=request.session.get('use_wp_rte', None),
-                wp_prop_flag=request.session.get('wp_prop_flag', None),
-                file_path=self.file.file_field.path if self.file is not None else "no file",
-            )
-            used_command = f"Results of: {self.chosen_tab}\n\n\n"
-            self.chosen_tab = used_command + get_result(self.chosen_tab)
-        else:
-            self.chosen_tab = self.chosen_tab()
 
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print("POST")
-        print(request.POST)
-        print(f"got=={request.POST.get('use_wp_rte', None)}")
-        print(f"got2=={request.POST.get('wp_prop_flag', None)}")
-        # print(f"got3=={request.POST.get('alt-ergo', None)}")
-        # print(f"got4=={request.POST.get('z3', None)}")
-        # print(f"got5=={request.POST.get('cvc4', None)}")
-        print(f"got6=={request.POST.get('provers', None)}")
         use_wp_rte = request.POST.get('use_wp_rte', None)
         wp_prop_flag = request.POST.get('wp_prop_flag', None)
-        # alt_ergo = request.POST.get('alt-ergo', None)
-        # z3 = request.POST.get('z3', None)
-        # cvc4 = request.POST.get('cvc4', None)
         provers = request.POST.get('provers', None)
 
         if provers is None:
@@ -206,19 +161,6 @@ class MainView(TemplateView):
         else:
             request.session['provers'] = provers
 
-        # self.chosen_tab = kwargs.get('chosen_tab', None)
-        # print(f"chosen_tab={self.chosen_tab}")
-    #     self.check_chosen_tab()
-    #     self.load_chosen_tab()
-    #     self.chosen_tab = self.chosen_tab(request.POST)
-    #     chosen_file = kwargs.get('chosen_file', None)
-    #     self.load_custom_data(chosen_file, request.user)
-    #
-    #     if self.chosen_tab.is_valid():
-    #         self.chosen_tab.add_to_session(request.session)
-    #
-        # return super().get(request, *args, **kwargs)
-        print("LEAVING")
         return redirect('main')
 
 
