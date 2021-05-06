@@ -19,6 +19,19 @@ function change_file(new_file) {
 
     $.ajax({
         type: "GET",
+        url: "/frama/file-content",
+        data: {
+            "chosen_file": new_file,
+        },
+
+        success: function (data) {
+            console.log("Got " + data)
+            $('#file-content-data').html(data)
+        }
+    })
+
+    $.ajax({
+        type: "GET",
         url: "/frama/program-elements",
         data: {
             "chosen_file": new_file,

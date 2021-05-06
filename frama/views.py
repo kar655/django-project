@@ -92,6 +92,34 @@ class ProgramElements(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
+class FileContent(TemplateView):
+    template_name = "frama/file_content.html"
+
+    file = None
+    file_content = None
+
+    def load_custom_data(self, chosen_file, user: User):
+
+        if chosen_file is not None:
+            self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
+            self.file_content = read_file(self.file)
+        else:
+            self.file = None
+            self.file_content = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['file_content'] = self.file_content
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        chosen_file = request.GET.get('chosen_file', None)
+        self.load_custom_data(chosen_file, request.user)
+
+        return super().get(request, *args, **kwargs)
+
+
 class TabsView(TemplateView):
     template_name = "frama/tab_data.html"
 
