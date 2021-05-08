@@ -25,7 +25,6 @@ function change_file(new_file) {
         },
 
         success: function (data) {
-            console.log("Got " + data)
             $('#file-content-data').html(data)
         }
     })
@@ -38,8 +37,13 @@ function change_file(new_file) {
         },
 
         success: function (data) {
-            console.log("Got " + data)
             $('#program-elements-data').html(data)
         }
     })
+
+    $('[id^=choose-file]').each(function () {
+        $(this).css("color", "blue")
+    })
+
+    $('#choose-file-' + new_file).css("color", "red")
 }
