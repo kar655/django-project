@@ -12,7 +12,6 @@ urlpatterns = [
     path('logout', login_required(views.LogoutView.as_view()), name="logout"),
     path('register', views.RegisterView.as_view(), name="register"),
     path('main', login_required(views.MainView.as_view()), name="main"),
-    path('main/<str:chosen_tab>/<str:chosen_file>', login_required(views.MainView.as_view()), name="main-tab-file"),
     path('file/add', login_required(views.FileCreateView.as_view()), name="file-add"),
     path('file/delete', login_required(views.FileDeleteView.as_view()), name="file-delete"),
     path('directory/add', login_required(views.DirectoryCreateView.as_view()), name="directory-add"),

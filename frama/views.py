@@ -176,51 +176,10 @@ class TabsView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
-# class FileStructure(TemplateView):
-#     template_name = "frama/directory_tree_recursive.html"
-#
-#     file = None
-#     root_directory = None
-#
-#     def load_custom_data(self, chosen_file, user: User):
-#         self.root_directory = Directory.objects.get(name="ROOT", user=user.id, is_valid=True)
-#
-#         if chosen_file is not None:
-#             self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
-#             self.file_elements_sections, self.line_tooltips = focus_on_program_elements_helper(self.file)
-#             self.file_content = read_file(self.file)
-#         else:
-#             self.file = None
-#             self.file_elements_sections = None
-#             self.line_tooltips = None
-#             self.file_content = None
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['recursive_structure'] = [self.root_directory]
-#         context['chosen_file'] = self.file
-#         context['file_elements_sections'] = self.file_elements_sections
-#         context['line_tooltips'] = self.line_tooltips
-#         context['file_content'] = self.file_content
-#         context['chosen_file_path'] = self.file.file_field.path if self.file else None
-#
-#         return context
-#
-#     def get(self, request, *args, **kwargs):
-#         init_root_directory(request.user)
-#         chosen_file = kwargs.get('chosen_file', None)
-#         self.load_custom_data(chosen_file, request.user)
-#
-#         return super().get(request, *args, **kwargs)
-
-
 class MainView(TemplateView):
     template_name = "frama/index.html"
 
     file = None
-    file_elements_sections = None
-    line_tooltips = None
-    file_content = None
     root_directory = None
 
     def load_custom_data(self, chosen_file, user: User):
@@ -228,28 +187,20 @@ class MainView(TemplateView):
 
         if chosen_file is not None:
             self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
-            self.file_elements_sections, self.line_tooltips = focus_on_program_elements_helper(self.file)
-            self.file_content = read_file(self.file)
         else:
             self.file = None
-            self.file_elements_sections = None
-            self.line_tooltips = None
-            self.file_content = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['recursive_structure'] = [self.root_directory]
         context['chosen_file'] = self.file
-        context['file_elements_sections'] = self.file_elements_sections
-        context['line_tooltips'] = self.line_tooltips
-        context['file_content'] = self.file_content
         context['chosen_file_path'] = self.file.file_field.path if self.file else None
 
         return context
 
     def get(self, request, *args, **kwargs):
         init_root_directory(request.user)
-        chosen_file = kwargs.get('chosen_file', None)
+        chosen_file = None
         self.load_custom_data(chosen_file, request.user)
 
         return super().get(request, *args, **kwargs)

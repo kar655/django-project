@@ -46,6 +46,4 @@ function change_file(new_file, new_file_path) {
     })
 
     $('#choose-file-' + new_file).css("color", "red")
-
-    // update file in
 }
