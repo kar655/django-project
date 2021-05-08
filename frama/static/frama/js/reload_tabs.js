@@ -14,8 +14,8 @@ function tab_clicked(tab, chosen_file) {
 }
 
 
-function change_file(new_file) {
-    console.log(new_file)
+function change_file(new_file, new_file_path) {
+    tab_clicked('result', new_file_path)
 
     $.ajax({
         type: "GET",
@@ -46,4 +46,6 @@ function change_file(new_file) {
     })
 
     $('#choose-file-' + new_file).css("color", "red")
+
+    // update file in
 }

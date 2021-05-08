@@ -9,7 +9,7 @@
                     {% for file in entry.file_set.all %}
                         {% if file.is_valid %}
                         <li>
-                            <a id="choose-file-{{ file.name }}" onclick="change_file(`{{ file.name }}`)" style="color: blue">{{ file }}</a>
+                            <a id="choose-file-{{ file.name }}" onclick="change_file(`{{ file.name }}`, `{{ file.file_field.path }}`)" style="color: blue">{{ file }}</a>
                         </li>
                         {% endif %}
                     {% endfor %}
