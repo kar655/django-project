@@ -1,11 +1,10 @@
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.models import User
-from random import randint
 
 from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
@@ -176,6 +175,60 @@ class TabsView(TemplateView):
         return super().get(request, *args, **kwargs)
 
 
+class DirectoryCreateView(UserCreateView):
+    model = Directory
+    form_class = DirectoryForm
+    success_url = reverse_lazy("main")
+
+
+class DirectoryDeleteView(UserFormView):
+    template_name = "frama/directory_delete_form.html"
+    form_class = DirectoryDeleteForm
+    success_url = reverse_lazy("main")
+
+    def form_valid(self, form):
+        directory = form.cleaned_data['directory']
+
+        def recursively_clear(direc: Directory):
+            direc.is_valid = False
+            direc.save()
+
+            for file in direc.file_set.all():
+                file.is_valid = False
+                file.save()
+
+            for child_directory in direc.directory_set.all():
+                recursively_clear(child_directory)
+
+        recursively_clear(directory)
+
+        return super(DirectoryDeleteView, self).form_valid(form)
+
+
+class FileCreateView(UserCreateView):
+    model = File
+    form_class = FileForm
+    success_url = reverse_lazy("main")
+
+
+class FileDeleteView(UserFormView):
+    template_name = "frama/file_delete_form.html"
+    form_class = FileDeleteForm
+    success_url = reverse_lazy("main")
+
+    def form_valid(self, form):
+        file = form.cleaned_data['file']
+        file.is_valid = False
+        file.save()
+        return super(FileDeleteView, self).form_valid(form)
+
+
+class FileSectionCreateView(UserCreateView):
+    model = FileSection
+    form_class = FileSectionForm
+    success_url = reverse_lazy("main")
+
+
 class MainView(TemplateView):
     template_name = "frama/index.html"
 
@@ -206,6 +259,26 @@ class MainView(TemplateView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        if "type" in request.POST:
+            request_type = request.POST["type"]
+            response = None
+
+            if request_type == "directory_form":
+                response = DirectoryCreateView()
+            elif request_type == "file_form":
+                response = FileCreateView()
+            elif request_type == "filesection_form":
+                response = FileSectionCreateView()
+            elif request_type == "file_delete_form":
+                response = FileDeleteView()
+            elif request_type == "directory_delete_form":
+                response = DirectoryDeleteView()
+            else:
+                raise Http404("")
+
+            response.request = request
+            return response.post(request, *args, **kwargs)
+
         use_wp_rte = request.POST.get('use_wp_rte', None)
         wp_prop_flag = request.POST.get('wp_prop_flag', None)
         provers = request.POST.get('provers', None)
@@ -217,57 +290,3 @@ class MainView(TemplateView):
             request.session['provers'] = provers
 
         return redirect('main')
-
-
-class DirectoryCreateView(UserCreateView):
-    model = Directory
-    form_class = DirectoryForm
-    success_url = reverse_lazy("main")
-
-
-class DirectoryDeleteView(UserFormView):
-    template_name = "frama/directory_form.html"
-    form_class = DirectoryDeleteForm
-    success_url = reverse_lazy("main")
-
-    def form_valid(self, form):
-        directory = form.cleaned_data['directory']
-
-        def recursively_clear(direc: Directory):
-            direc.is_valid = False
-            direc.save()
-
-            for file in direc.file_set.all():
-                file.is_valid = False
-                file.save()
-
-            for child_directory in direc.directory_set.all():
-                recursively_clear(child_directory)
-
-        recursively_clear(directory)
-
-        return super(DirectoryDeleteView, self).form_valid(form)
-
-
-class FileCreateView(UserCreateView):
-    model = File
-    form_class = FileForm
-    success_url = reverse_lazy("main")
-
-
-class FileDeleteView(UserFormView):
-    template_name = "frama/file_form.html"
-    form_class = FileDeleteForm
-    success_url = reverse_lazy("main")
-
-    def form_valid(self, form):
-        file = form.cleaned_data['file']
-        file.is_valid = False
-        file.save()
-        return super(FileDeleteView, self).form_valid(form)
-
-
-class FileSectionCreateView(UserCreateView):
-    model = FileSection
-    form_class = FileSectionForm
-    success_url = reverse_lazy("main")

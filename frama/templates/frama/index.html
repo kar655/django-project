@@ -10,13 +10,14 @@
 <body>
 <div class="full-height">
     <div class="topnav">
-        <a href="{% url 'file-add' %}">Add file</a>
-        <a href="{% url 'file-delete' %}">Delete file</a>
-        <a href="{% url 'file-section-add' %}">Divide File</a>
-        <a href="{% url 'directory-add' %}">Add directory</a>
-        <a href="{% url 'directory-delete' %}">Delete directory</a>
+        <a href="{% url 'main' %}">Main</a>
+        <a onclick="navigation_clicked('file/add')">Add file</a>
+        <a onclick="navigation_clicked('file/delete')">Delete file</a>
+        <a onclick="navigation_clicked('file-section/add')">Divide File</a>
+        <a onclick="navigation_clicked('directory/add')">Add directory</a>
+        <a onclick="navigation_clicked('directory/delete')">Delete directory</a>
     </div>
-    <div class="flex-grid">
+    <div class="flex-grid" id="page-data">
         <div class="col" id="files">
             <p id="random">Random Here</p>
             <h3>File Selection dialog</h3>

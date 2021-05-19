@@ -13,6 +13,16 @@ function tab_clicked(tab, chosen_file) {
     })
 }
 
+function navigation_clicked(nav) {
+    $.ajax({
+        type: "GET",
+        url: "/frama/" + nav,
+
+        success: function (data) {
+            $('#page-data').html(data)
+        }
+    })
+}
 
 function change_file(new_file, new_file_path) {
     tab_clicked('result', new_file_path)
