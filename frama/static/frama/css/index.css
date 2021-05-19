@@ -91,6 +91,10 @@ ul > li {
     max-height: 20%;
 }
 
+#logout-tab {
+    float: right;
+}
+
 /* Display sections one below another */
 @media screen and (max-width: 800px) {
     .flex-grid {

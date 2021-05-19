@@ -1,6 +1,6 @@
 <form method="post" enctype="multipart/form-data">
     <input type="hidden" name="type" value="file_form">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <button type="submit">save</button>
 </form>
