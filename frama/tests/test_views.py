@@ -174,20 +174,12 @@ class MainViewTest(GenerateFileStructureTests):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertContains(response, "Please choose a file", html=True)
 
         # Test get_context_data
         self.assertIsNotNone(response.context['recursive_structure'])
         self.assertIsNone(response.context['chosen_file'])
-        self.assertIsNone(response.context['file_elements_sections'])
-        self.assertIsNone(response.context['line_tooltips'])
-        self.assertIsNone(response.context['file_content'])
-        self.assertIsNotNone(response.context['chosen_tab'])
-        self.assertIsNotNone(response.context['is_result'])
+        self.assertIsNone(response.context['chosen_file_path'])
 
         # Test used templates
         self.assertTemplateUsed(response, "frama/index.html")
         self.assertTemplateUsed(response, "frama/directory_tree_recursive.html")
-        self.assertTemplateUsed(response, "frama/file_content.html")
-        self.assertTemplateUsed(response, "frama/program_elements.html")
-        self.assertTemplateUsed(response, "frama/tab_data.html")
