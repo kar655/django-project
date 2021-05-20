@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from . import views
 
 urlpatterns = [
-    path('random', views.random_view, name="random"),
     path('tabs', views.TabsView.as_view(), name="tabs"),
     path('program-elements', views.ProgramElements.as_view(), name='program-elements'),
     path('file-content', views.FileContent.as_view(), name='file-content'),

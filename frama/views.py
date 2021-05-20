@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, FormView
@@ -11,11 +11,6 @@ from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm
 from .helpers import focus_on_program_elements_helper, read_file, get_result, \
     init_root_directory
 from .models import File, Directory, FileSection
-
-
-def random_view(request):
-    # return HttpResponse(f"Random int = {randint(0, 1000)}")
-    return render(request, "frama/test.html")
 
 
 class UserCreateView(CreateView):

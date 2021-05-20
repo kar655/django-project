@@ -7,8 +7,6 @@ from frama.forms import RegisterForm, DirectoryForm, DirectoryDeleteForm, FileFo
     FileDeleteForm, FileSectionForm, TabProversForm, TabVCsForm
 
 
-# TODO add tests with is_valid = False
-
 class RegisterFormTest(TestCase):
 
     def setUp(self):

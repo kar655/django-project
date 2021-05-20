@@ -1,6 +1,5 @@
 import re
 import subprocess
-from pprint import pprint
 from django.contrib.auth.models import User
 
 from .models import File, Directory, FileSection
@@ -39,7 +38,6 @@ def focus_on_program_elements_helper(file: File):
 
     for line in result.stdout.splitlines(keepends=True):
         if re.match(r"-+", line):
-            # sections.append(''.join(current))
             line_tooltip[line_number] = ''.join(current)
             current.append(line)
             sections.append((line_number, ''.join(current)))
@@ -56,10 +54,7 @@ def focus_on_program_elements_helper(file: File):
         sections.append((line_number, ''.join(current)))
         line_tooltip[line_number] = ''.join(current)
 
-    # pprint(sections)
-
     return sections, line_tooltip
-    # return [(None, result.stdout)], line_tooltip
 
 
 def read_file(file: File):
