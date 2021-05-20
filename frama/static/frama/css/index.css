@@ -6,18 +6,19 @@
     --background: whitesmoke;
 
     /* light style */
-    /* --bar_color: #297373;
+    /*
+    --bar_color: #297373;
     --default: #F3D3BD;
-    --background: #f4ebd9; */
+    */
 }
 
 html, body {
-    background-color: var(--background);
+    background-color: var(--default);
     margin: 0;
 }
 
-div {
-    background-color: var(--default);
+form {
+    padding: 10px;
 }
 
 .full-height {
