@@ -38,9 +38,10 @@
             </div>
             <div id="tabs">
                 <div class="topnav">
-                    <a id="tab-provers" onclick="tab_clicked('provers', `{{ chosen_file_path }}`)" >PROVERS</a>
-                    <a id="tab-vcs" onclick="tab_clicked('vcs', `{{ chosen_file_path }}`)" >VCs</a>
-                    <a id="tab-result" onclick="tab_clicked('result', `{{ chosen_file_path }}`)" >RESULT</a>
+                    <div id="chosen_file_path" style="display: none">`{{ chosen_file_path }}`</div>
+                    <a id="tab-provers" onclick="tab_clicked('provers')" >PROVERS</a>
+                    <a id="tab-vcs" onclick="tab_clicked('vcs')" >VCs</a>
+                    <a id="tab-result" onclick="tab_clicked('result')" >RESULT</a>
                 </div>
                 <div id="tabs-data">
                 </div>

@@ -1,10 +1,10 @@
-function tab_clicked(tab, chosen_file) {
+function tab_clicked(tab) {
     $.ajax({
         type: "GET",
         url: "/frama/tabs",
         data: {
             "chosen_tab": tab,
-            "chosen_file": chosen_file,
+            "chosen_file": tab === "result" ? $('#chosen_file_path').text() : "",
         },
 
         success: function (data) {
@@ -25,6 +25,7 @@ function navigation_clicked(nav) {
 }
 
 function change_file(new_file, new_file_path) {
+    $('#chosen_file_path').text(new_file_path)
     tab_clicked('result', new_file_path)
 
     $.ajax({
