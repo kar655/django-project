@@ -100,6 +100,31 @@ class AllViewsGetPostTest(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
 
+class AjaxViewsGetTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username="user", password="password")
+        self.client.force_login(self.user)
+
+    @parameterized.expand([
+        ["tabs", reverse("tabs")],
+        ["program-elements", reverse("program-elements")],
+        ["file-content", reverse("file-content")],
+    ])
+    def test_get(self, name, url):
+        response = self.client.get(url, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    @parameterized.expand([
+        ["tabs", reverse("tabs")],
+        ["program-elements", reverse("program-elements")],
+        ["file-content", reverse("file-content")],
+    ])
+    def test_get_no_ajax(self, name, url):
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+
+
 class DirectoryDeleteViewTest(GenerateFileStructureTests):
 
     def setUp(self):
