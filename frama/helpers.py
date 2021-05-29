@@ -25,6 +25,12 @@ def get_result(command: str):
     return result.stdout
 
 
+def read_raw_file(file: File):
+    with open(file.file_field.path) as f:
+        content = f.read()
+    return content
+
+
 def focus_on_program_elements_helper(file: File):
     result = subprocess.run(["frama-c", "-wp", "-wp-print", file.file_field.path],
                             text=True,

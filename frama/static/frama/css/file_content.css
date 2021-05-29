@@ -1,0 +1,27 @@
+.cm-procedure {
+    color: aliceblue !important;
+}
+
+.cm-property {
+    color: lawngreen !important;
+}
+
+.cm-lemma {
+    color: violet !important;
+}
+
+.cm-assertion {
+    color: orangered !important;
+}
+
+.cm-invariant {
+    color: teal !important;
+}
+
+.cm-precondition {
+    color: darkmagenta !important;
+}
+
+.cm-postcondition {
+    color: darkblue !important;
+}

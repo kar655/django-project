@@ -71,6 +71,10 @@ ul > li {
     color: black;
 }
 
+.CodeMirror {
+  height: auto !important;
+}
+
 #tabs-data {
     overflow-y: scroll;
     height: 20vh;

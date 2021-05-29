@@ -1,8 +1,28 @@
 {% load static %}
-<link rel="stylesheet" href="{% static 'frama/css/file_sections.css' %}">
-{% load filters %}
-<pre>
-<code>
-{% if file_content %}{% for section_type, line in file_content %}<div id="line-{{ forloop.counter }}" class="tooltip{% if section_type %} {{ section_type }}{% endif %}">{{ line }}{% if forloop.counter in line_tooltips %}<span class="tooltiptext">{{ line_tooltips|dict_item:forloop.counter }}</span>{% endif %}</div>{% endfor %}{% else %}Please choose a file{% endif %}
-</code>
-</pre>
+<link rel="stylesheet" href="{% static 'codemirror/lib/codemirror.css' %}">
+<link rel="stylesheet" href="{% static 'codemirror/theme/darcula.css' %}">
+<link rel="stylesheet" href="{% static 'frama/css/file_content.css' %}">
+<script src="{% static 'codemirror/lib/codemirror.js' %}"></script>
+<script src="{% static 'codemirror/mode/clike/clike.js' %}"></script>
+<script src="{% static 'codemirror/addon/mode/keyword.js' %}"></script>
+
+<div><textarea id="file-content">
+{{ file_content }}
+</textarea></div>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("file-content"), {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: "text/x-csrc",
+        theme: "darcula",
+        keyword: {
+            "predicate": "procedure",
+            "loop": "invariant",
+            "invariant": "invariant",
+            "variant": "invariant",
+            "assert": "assertion",
+            "requires": "precondition",
+            "ensures": "postcondition",
+        }
+    });
+</script>
