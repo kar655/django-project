@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
 from .helpers import focus_on_program_elements_helper, read_file, get_result, \
-    init_root_directory
+    init_root_directory, read_raw_file
 from .models import File, Directory, FileSection
 
 
@@ -100,8 +100,10 @@ class FileContent(TemplateView):
     def load_custom_data(self, chosen_file, user: User):
         if chosen_file is not None:
             self.file = get_object_or_404(File, name=chosen_file, user=user.id, is_valid=True)
-            _, self.line_tooltips = focus_on_program_elements_helper(self.file)
-            self.file_content = read_file(self.file)
+            # TODO
+            # _, self.line_tooltips = focus_on_program_elements_helper(self.file)
+            # self.file_content = read_file(self.file)
+            self.file_content = read_raw_file(self.file)
         else:
             self.file = None
             self.line_tooltips = None
