@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm, FileDeleteForm, \
     ChosenTab, RegisterForm
-from .helpers import focus_on_program_elements_helper, read_file, get_result, \
+from .helpers import focus_on_program_elements_helper, get_result, \
     init_root_directory, read_raw_file
 from .models import File, Directory, FileSection
 

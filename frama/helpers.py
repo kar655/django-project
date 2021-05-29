@@ -62,29 +62,3 @@ def focus_on_program_elements_helper(file: File):
 
     return sections, line_tooltip
 
-
-def read_file(file: File):
-    sections = {
-        "predicate": FileSection.SectionCategory.PROCEDURE,
-        "requires": FileSection.SectionCategory.PRECONDITION,
-        "ensures": FileSection.SectionCategory.POSTCONDITION,
-        "assert": FileSection.SectionCategory.ASSERTION,
-        "lemma": FileSection.SectionCategory.LEMMA,
-        "loop": FileSection.SectionCategory.INVARIANT
-    }
-
-    file.file_field.open("r")
-
-    result = []
-    for line in file.file_field.readlines():
-        match_results = re.search(r"@ +([a-z]+)", line)
-        if match_results is not None:
-            match = match_results.group(1)
-            if match in sections:
-                result.append((sections[match], line))
-                continue
-
-        result.append((None, line))
-
-    file.file_field.close()
-    return result
