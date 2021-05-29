@@ -29,7 +29,7 @@ SECRET_KEY = '3n@6ij$-$n51+v_2v3mtgjv(1lg&1*tz@i&cftwrq#%=j=y(9a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["localhost", "127.0.0.1"] #TODO
 
 LOGIN_URL = '/frama/login'
 LOGIN_REDIRECT_URL = '/frama/main'
@@ -129,3 +129,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = Path.home() / "nginx" / "static" #TODO
