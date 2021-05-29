@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
@@ -11,10 +11,6 @@ from .forms import FileForm, DirectoryForm, FileSectionForm, DirectoryDeleteForm
 from .helpers import focus_on_program_elements_helper, read_file, get_result, \
     init_root_directory, read_raw_file
 from .models import File, Directory, FileSection
-
-
-class Codemirror(TemplateView):
-    template_name = "frama/codemirror.html"
 
 
 class UserCreateView(CreateView):
@@ -124,6 +120,20 @@ class FileContent(TemplateView):
         self.load_custom_data(chosen_file, request.user)
 
         return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            raise Http404()
+
+        chosen_file = request.POST.get('chosen_file', None)
+        file_content = request.POST.get('file_content', None)
+
+        file = get_object_or_404(File, name=chosen_file, user=request.user, is_valid=True)
+
+        with open(file.file_field.path, "w") as f:
+            f.write(file_content)
+
+        return HttpResponse()
 
 
 class TabsView(TemplateView):

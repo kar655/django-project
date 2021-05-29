@@ -11,6 +11,7 @@
 <div class="full-height">
     <div class="topnav">
         <a href="{% url 'main' %}">Main</a>
+        <a onclick="save_file()">Save</a>
         <a onclick="navigation_clicked('file/add')">Add file</a>
         <a onclick="navigation_clicked('file/delete')">Delete file</a>
         <a onclick="navigation_clicked('file-section/add')">Divide File</a>
@@ -39,6 +40,7 @@
             <div id="tabs">
                 <div class="topnav">
                     <div id="chosen_file_path" style="display: none">`{{ chosen_file_path }}`</div>
+                    <div id="chosen_file_name" style="display: none">`{{ chosen_file }}`</div>
                     <a id="tab-provers" onclick="tab_clicked('provers')" >PROVERS</a>
                     <a id="tab-vcs" onclick="tab_clicked('vcs')" >VCs</a>
                     <a id="tab-result" onclick="tab_clicked('result')" >RESULT</a>
