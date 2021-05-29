@@ -13,6 +13,10 @@ from .helpers import focus_on_program_elements_helper, read_file, get_result, \
 from .models import File, Directory, FileSection
 
 
+class Codemirror(TemplateView):
+    template_name = "frama/codemirror.html"
+
+
 class UserCreateView(CreateView):
     class Meta:
         abstract = True
