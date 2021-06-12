@@ -49,7 +49,7 @@ class LogoutView(auth_views.LogoutView):
 
 
 class RegisterView(CreateView):
-    template_name = "frama/login_form.html"
+    template_name = "frama/register_form.html"
     form_class = RegisterForm
     success_url = reverse_lazy("login")
 

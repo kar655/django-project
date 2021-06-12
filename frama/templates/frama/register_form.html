@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login Form</title>
+    <title>Register Form</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'frama/css/index.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">save</button>
-    <button type="button" onclick="location.href='{% url 'register' %}'">register</button>
+    <button type="button" onclick="location.href='{% url 'login' %}'">login</button>
 </form>
 </body>
 </html>
