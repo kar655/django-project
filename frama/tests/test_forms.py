@@ -207,7 +207,6 @@ class FileSectionFormTest(TestCase):
         self.form_data.pop("status_data")
         form = FileSectionForm(self.form_data, user_id=self.user.id)
         self.assertTrue(form.is_valid())
-        # Todo add parametrized with missing one of necessary value
 
     def test_second_user(self):
         second_user = User.objects.create(username="second", password="password")
